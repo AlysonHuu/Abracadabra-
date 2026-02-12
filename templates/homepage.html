@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+
+<html>
+
+
+<div style="background-color: #4a3434;text-align:center;padding:20px;margin-bottom: 30px;">
+    <a href="#">
+        <img src="/images/banner.jpg" alt="Pub cinéma" style="width:80%; max-width: 800px;">
+    </a>
+</div>
+
+<h1>À L'AFFICHE</h1>
+
+<div style="display:flex;overflow-x: auto;gap:20px;padding: 20px;">
+    {% for film in films %}
+        <div style="min-width:200px;">
+            <img src="/images/{{ film.poster }}" alt="{{ film.titre }}" width="150">
+            <h2>{{ film.titre }}</h2>
+            <p>Durée: {{film.duree}} min  Note : {{film.note}}</p>
+
+             <h3>Séances aujourd'hui :</h3>
+
+        {% for seance in film.seances %}
+            <a href="/films/{{ film.id }}/reserver">
+                <button>{{ seance }}</button>
+            </a>
+
+            <a href="/films/{{ film.id}}">Voir détails</a>
+
+        <a href="/films/{{film.id }}/seances">
+            <button>Voir les séances</button>
+        </a>
+
+        <a href="/films/{{film.id}}/reserver">
+            <button>Réserver</button>
+        </a>
+        </div>
+    {% endfor %}
+
+</div>
+
+</html>
+
+
+>
