@@ -6,6 +6,8 @@
 
 # To list all registered routes, run the following command:
 #   bin/console debug:router
+# config/routes.yaml
 
-controllers:
-    resource: routing.controllers
+cinema_homepage:
+    path: /
+    controller: App\Controller\HomePageController::index

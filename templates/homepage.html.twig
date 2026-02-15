@@ -4,7 +4,6 @@
 
 {% block body %}
 
-<!-- HERO (inchangé) -->
 <div class="hero">
     <div class="hero-text">
         <h1>Le charme du vrai cinéma</h1>
@@ -12,8 +11,8 @@
     </div>
 </div>
 
-<!-- SECTION A L'AFFICHE -->
-<section class="section">
+
+<section class="carousel-section">
     <h2>À L'AFFICHE</h2>
 
     <div class="carousel-container">
@@ -26,7 +25,6 @@
                     <div class="film-info">
                         <h3>{{ film.titre }}</h3>
                         <p>⏱ {{ film.duree }} min</p>
-
                         <div class="stars">
                             {% for i in 1..5 %}
                                 {% if i <= film.note %}
@@ -36,7 +34,6 @@
                                 {% endif %}
                             {% endfor %}
                         </div>
-
                         <a href="#" class="btn">Réserver</a>
                     </div>
                 </div>
@@ -47,7 +44,6 @@
     </div>
 </section>
 
-<!-- JS CAROUSEL -->
 <script>
 let index = 0;
 const items = document.querySelectorAll('.carousel-item');
@@ -79,22 +75,25 @@ function prevSlide() {
 updateCarousel();
 </script>
 
-<!-- CSS CAROUSEL -->
 <style>
+.carousel-section {
+    padding: 80px;
+    text-align: center;
+}
+
 .carousel-container {
     position: relative;
     width: 100%;
-    height: 550px;
+    height: 650px; /* plus grand */
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 40px;
 }
 
 .carousel {
     position: relative;
     width: 800px;
-    height: 500px;
+    height: 600px; /* plus grand */
 }
 
 .carousel-item {
@@ -103,11 +102,13 @@ updateCarousel();
     transition: 0.5s;
     opacity: 0;
     transform: scale(0.8);
+    text-align: center;
 }
 
 .carousel-item img {
     width: 100%;
     border-radius: 15px;
+    display: block;
 }
 
 .carousel-item.active {
@@ -119,30 +120,38 @@ updateCarousel();
 
 .carousel-item.left {
     transform: scale(0.85);
-    opacity: 0.6;
+    opacity: 0.3;
     left: 0;
     z-index: 2;
 }
 
 .carousel-item.right {
     transform: scale(0.85);
-    opacity: 0.6;
+    opacity: 0.3;
     left: 500px;
     z-index: 2;
 }
 
 .film-info {
-    margin-top: 10px;
-    text-align: center;
+    margin-top: 15px;
+}
+
+.stars {
+    margin: 10px 0;
 }
 
 .star {
-    font-size: 20px;
+    font-size: 22px;
     color: #ccc;
 }
 
 .star.filled {
     color: gold;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 10px;
 }
 
 .arrow {
