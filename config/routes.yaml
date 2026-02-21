@@ -8,6 +8,11 @@
 #   bin/console debug:router
 # config/routes.yaml
 
+
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
 cinema_homepage:
     path: /
     controller: App\Controller\HomePageController::index
