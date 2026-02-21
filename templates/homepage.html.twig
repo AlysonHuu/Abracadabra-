@@ -4,60 +4,79 @@
 
 {% block body %}
 
-<div class="hero">
-    <div class="hero-text">
-        <h1>Le charme du vrai cinéma</h1>
-        <a href="#" class="btn">Voir les séances</a>
+<div class="container my-4" style="max-width: 1200px;">
+    <div id="pubCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#pubCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#pubCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#pubCarousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner" style="height: 500px; border-radius: 20px; overflow: hidden;">
+            <div class="carousel-item active h-100">
+                <img src="{{ asset('images/Menu.png') }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Menu">
+            </div>
+            <div class="carousel-item h-100">
+                <img src="{{ asset('images/glace.jpg') }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Glace">
+            </div>
+            <div class="carousel-item h-100">
+                <img src="{{ asset('images/avatar_pub.jpg') }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Avatar">
+            </div>
+        </div>
     </div>
 </div>
 
 
 <section class="carousel-section">
-    <h2>À L'AFFICHE</h2>
+    <h2 class="section-title">À L'AFFICHE</h2>
 
     <div class="carousel-container">
-        <button class="arrow left" onclick="prevSlide()">❮</button>
+        <button class="arrow left-arrow" onclick="prevSlide()">❮</button>
 
-        <div class="carousel">
+        <div class="carousel films-carousel">
             {% for film in films %}
-                <div class="carousel-item">
+                <div class="film-item">
                     <img src="{{ film.poster }}" alt="{{ film.titre }}">
                     <div class="film-info">
                         <h3>{{ film.titre }}</h3>
-                        <p>⏱ {{ film.duree }} min</p>
+                        <p><i class="fa-regular fa-clock"></i> {{ film.duree }} min</p>
                         <div class="stars">
                             {% for i in 1..5 %}
-                                {% if i <= film.note %}
-                                    <span class="star filled">★</span>
-                                {% else %}
-                                    <span class="star">☆</span>
-                                {% endif %}
+                                <span class="star {{ i <= film.note ? 'filled' : '' }}">★</span>
                             {% endfor %}
                         </div>
-                        <a href="#" class="btn">Réserver</a>
+                        <a href="{{ path('film_plus', {'id': film.id}) }}" class="btn-plus">En savoir plus</a>
                     </div>
                 </div>
             {% endfor %}
         </div>
 
-        <button class="arrow right" onclick="nextSlide()">❯</button>
+        <button class="arrow right-arrow" onclick="nextSlide()">❯</button>
     </div>
 </section>
 
 <script>
 let index = 0;
-const items = document.querySelectorAll('.carousel-item');
+
+const items = document.querySelectorAll('.films-carousel .film-item');
 
 function updateCarousel() {
     items.forEach((item, i) => {
-        item.classList.remove('active', 'left', 'right');
+      
+        item.classList.remove('active', 'left', 'right', 'far-left', 'far-right');
 
+        const total = items.length;
+
+      
         if (i === index) {
             item.classList.add('active');
-        } else if (i === (index - 1 + items.length) % items.length) {
+        } else if (i === (index - 1 + total) % total) {
             item.classList.add('left');
-        } else if (i === (index + 1) % items.length) {
+        } else if (i === (index - 2 + total) % total) {
+            item.classList.add('far-left');
+        } else if (i === (index + 1) % total) {
             item.classList.add('right');
+        } else if (i === (index + 2) % total) {
+            item.classList.add('far-right');
         }
     });
 }
@@ -72,102 +91,148 @@ function prevSlide() {
     updateCarousel();
 }
 
-updateCarousel();
+
+document.addEventListener("DOMContentLoaded", updateCarousel);
 </script>
 
 <style>
-.carousel-section {
-    padding: 80px;
-    text-align: center;
+body {
+    background-color: #8B0000;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    margin: 0;
 }
+
+h2 {padding-top: 40px;
+    margin-left: 50px; 
+}
+
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    font-weight: bold;
+}
+
 
 .carousel-container {
     position: relative;
     width: 100%;
-    height: 650px; /* plus grand */
+    max-width: 1200px;
+    height: 550px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
-.carousel {
+
+.carousel.films-carousel {
     position: relative;
-    width: 800px;
-    height: 600px; /* plus grand */
-}
-
-.carousel-item {
-    position: absolute;
-    width: 300px;
-    transition: 0.5s;
-    opacity: 0;
-    transform: scale(0.8);
-    text-align: center;
-}
-
-.carousel-item img {
     width: 100%;
+    height: 100%;
+}
+
+.film-item {
+    position: absolute;
+    width: 220px;
+    transition: all 0.5s ease-in-out;
+    opacity: 0; 
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    pointer-events: none;
+}
+
+.film-item img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
     border-radius: 15px;
-    display: block;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-.carousel-item.active {
-    transform: scale(1);
+
+.film-item.active {
     opacity: 1;
-    left: 250px;
-    z-index: 3;
+    transform: translate(-50%, -50%) scale(1.1);
+    z-index: 10;
+    pointer-events: auto;
 }
 
-.carousel-item.left {
-    transform: scale(0.85);
+
+.film-item.left {
+    opacity: 0.7;
+    transform: translate(-160%, -50%) scale(0.85);
+    z-index: 5;
+}
+
+.film-item.right {
+    opacity: 0.7;
+    transform: translate(60%, -50%) scale(0.85);
+    z-index: 5;
+}
+
+
+.film-item.far-left {
     opacity: 0.3;
-    left: 0;
+    transform: translate(-260%, -50%) scale(0.65);
     z-index: 2;
 }
 
-.carousel-item.right {
-    transform: scale(0.85);
+.film-item.far-right {
     opacity: 0.3;
-    left: 500px;
+    transform: translate(160%, -50%) scale(0.65);
     z-index: 2;
 }
+
 
 .film-info {
     margin-top: 15px;
+    transition: 0.3s;
+    opacity: 0;
 }
 
-.stars {
-    margin: 10px 0;
+.film-item.active .film-info {
+    opacity: 1; 
 }
 
-.star {
-    font-size: 22px;
-    color: #ccc;
-}
+.star { color: #ccc; font-size: 18px; }
+.star.filled { color: gold; }
 
-.star.filled {
-    color: gold;
-}
-
-.btn {
+.btn-plus {
     display: inline-block;
+    background: white;
+    color: #8B0000;
+    padding: 8px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
     margin-top: 10px;
 }
 
+
 .arrow {
-    background: #8B0000;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
     color: white;
     border: none;
-    font-size: 25px;
-    padding: 10px 15px;
-    cursor: pointer;
+    font-size: 30px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    margin: 20px;
+    cursor: pointer;
+    z-index: 100;
+    transition: 0.3s;
 }
 
-.arrow:hover {
-    background: #a80000;
-}
+.arrow:hover { background: white; color: #8B0000; }
+.left-arrow { left: 20px; }
+.right-arrow { right: 20px; }
+
 </style>
 
 {% endblock %}

@@ -1,157 +1,77 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}CinéPlus{% endblock %}</title>
+  <meta charset="UTF-8">
+  <title>{% block title %}Abracadabra Cinéma{% endblock %}</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f5efe6;
-            color: #2c2c2c;
-        }
 
-        /* NAVBAR */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 50px;
-            background: #ffffff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+  <script src="https://kit.fontawesome.com/f6563890e5.js" crossorigin="anonymous"></script>
 
-        nav h2 {
-            margin: 0;
-            color: #8B0000;
-        }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 30px;
-            margin: 0;
-        }
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: 0.3s;
-        }
 
-        nav ul li a:hover {
-            color: #8B0000;
-        }
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
-        .hero {
-            height: 500px;
-            background: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba') center/cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            color: white;
-        }
-
-        .hero::after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-        }
-
-        .hero-text {
-            position: relative;
-            text-align: center;
-            z-index: 2;
-        }
-
-        .hero-text h1 {
-            font-size: 50px;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            background-color: #8B0000;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #a80000;
-        }
-
-        /* FILMS */
-        .section {
-            padding: 60px 80px;
-            text-align: center;
-        }
-
-        .films {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-
-        .card {
-            background: white;
-            width: 220px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-        }
-
-        .card img {
-            width: 100%;
-            height: 320px;
-            object-fit: cover;
-        }
-
-        .card-body {
-            padding: 15px;
-        }
-
-        footer {
-            background: #8B0000;
-            color: white;
-            padding: 30px;
-            text-align: center;
-            margin-top: 60px;
-        }
-    </style>
-
-    {% block stylesheets %}{% endblock %}
 </head>
 <body>
 
-<nav>
-    <h2>CinéPlus</h2>
-    <ul>
-        <li><a href="#">Accueil</a></li>
-        <li><a href="#">À l'affiche</a></li>
-        <li><a href="#">Contact</a></li>
-    </ul>
-</nav>
+ <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">I AAM Cinéma</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+        aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-{% block body %}{% endblock %}
+      <div class="collapse navbar-collapse" id="navbarScroll">
+        <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+          <li class="nav-item text-center">
+            <a class="nav-link" href="#"><i class="fa-solid fa-house fa-lg"></i><br>ACCUEIL</a>
+          </li>
+           <li class="nav-item text-center">
+            <a class="nav-link" href="#"><i class="fa-solid fa-film"></i></i></i><br>FILMS</a>
+          </li>
 
-<footer>
-    © 2025 CinéPlus – L’amour du 7ème art
-</footer>
 
+
+          <li class="nav-item text-center">
+            <a class="nav-link" href="#"><i class="fa-solid fa-circle-user fa-lg"></i><br>MON COMPTE</a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="nav-link" href="#"><i class="fa-solid fa-ticket-simple fa-lg"></i><br>MES RÉSERVATIONS</a>
+          </li>
+           
+
+          
+        </ul>
+
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Recherche">
+          <button class="btn btn-outline-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+
+      </div>
+    </div>
+  </nav>
+<style>
+
+
+  .navbar-brand {
+    margin-right: 70px;
+}
+
+.navbar {
+    background-color: #EDE6DD; 
+}
+</style>
+
+  {% block body %}{% endblock %}
+
+  <footer>
+    © 2025 Abracadabra  - La magie au cinéma
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

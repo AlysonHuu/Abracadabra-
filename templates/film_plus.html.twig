@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ film.titre }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5 text-white">
+
+    <div style="display:flex; gap:40px; align-items:center;">
+        <img src="{{ film.poster }}" alt="{{ film.titre }}" 
+             style="width:300px; border-radius:20px;">
+
+        <div>
+            <h1>{{ film.titre }}</h1>
+            <p><strong>Durée :</strong> {{ film.duree }} min</p>
+            <p>{{ film.description }}</p>
+
+            <a href="{{ path('home') }}" class="btn btn-light mt-3">
+                ← Retour
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -9,29 +9,29 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomePageController extends AbstractController
 {
-    #[Route('/', name: 'home')] // Attribute PHP 8 . Définit la route principale (home) du site. Execution de la méthode index()
+    #[Route('/', name: 'home')] 
 public function index(): Response 
 {
     $films = [
-        [
+        [    'id'=> 1,
             'titre' => 'Inception',
             'poster' => 'https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg',
             'duree' => 148,
             'note' => 5
         ],
-        [
+        [   'id'=>2,
             'titre' => 'Interstellar',
             'poster' => 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
             'duree' => 169,
             'note' => 4
         ],
-        [
+        [    'id'=>3,
             'titre' => 'Joker',
             'poster' => 'https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg',
             'duree' => 122,
             'note' => 5
         ],
-        [
+        [   'id'=>4,
             'titre' => 'The Batman',
             'poster' => 'https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg',
             'duree' => 176,
@@ -39,7 +39,7 @@ public function index(): Response
         ]
     ];
 
-    return $this->render('homepage.html.twig', [ //méthode render avec twig qui gere l'affichage et le controleur les données 
+    return $this->render('homepage.html.twig', [ 
         'films' => $films
     ]);
 }
