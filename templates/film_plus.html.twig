@@ -2,23 +2,36 @@
 
 {% block title %}{{ film.titre }}{% endblock %}
 
+
+{% block stylesheets %}
+
+{% endblock %}
+
 {% block body %}
-<div class="container mt-5 text-white">
+<div class="container">
+    <div class="film-container">
+        
+      
+        <img src="{{ film.poster }}" alt="{{ film.titre }}" class="film-poster">
 
-    <div style="display:flex; gap:40px; align-items:center;">
-        <img src="{{ film.poster }}" alt="{{ film.titre }}" 
-             style="width:300px; border-radius:20px;">
-
-        <div>
+    
+        <div class="film-details">
             <h1>{{ film.titre }}</h1>
-            <p><strong>Durée :</strong> {{ film.duree }} min</p>
-            <p>{{ film.description }}</p>
+            
+            <span class="badge bg-warning text-black">Note : {{film.note}}/5</span>
+            <p class="mt-3"> {{ film.genre }} <strong>.</strong> {{film.realisateur}}</p>
+            <p class="mt-3"><strong>Durée :</strong> {{ film.duree }} min</p>
+            <p class="mt-3"><strong>Date de sortie:</strong> {{ film.date }}</p>
+            <div class="film-description">
+                <strong>Description :</strong><br> 
+                {{ film.description }}
+            </div>
 
-            <a href="{{ path('home') }}" class="btn btn-light mt-3">
-                ← Retour
-            </a>
+            <a href="{{ path('home') }}" class="btn btn-custom-retour mt-4">
+    ← Retour à l'accueil
+</a>
         </div>
+        
     </div>
-
 </div>
 {% endblock %}

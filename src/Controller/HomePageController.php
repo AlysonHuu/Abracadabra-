@@ -37,6 +37,16 @@ public function index(): Response
             'duree' => 176,
             'note' => 4
         ]
+        ,[  'id'=>5,
+            'titre'=>'Avatar 3: De Feu et de Cendre',
+            'poster'=>'https://fr.web.img6.acsta.net/img/52/fb/52fb8f0345af2b0940557aa049ca19fd.jpg',
+            'duree'=>200,
+            'note'=>4
+        
+        
+        
+        
+        ]
     ];
 
     return $this->render('homepage.html.twig', [ 
