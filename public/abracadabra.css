@@ -6,13 +6,25 @@ body {
     margin: 0;
 }
 
-.navbar {
-    background-color: #EDE6DD; 
+.custom-navbar {
+    background-color: #4d0a0a;
 }
 
 .navbar-brand {
     margin-right: 70px;
 }
+
+.custom-search-btn {
+    border: 2px solid #f7f7f7;
+    color: #f7f7f7;
+    background-color: #8B0000;
+}
+
+.custom-search-btn:hover {
+    background-color: #8B0000;
+    color: white;
+}
+
 
 footer {
     text-align: center;
