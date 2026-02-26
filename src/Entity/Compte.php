@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: CompteRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\HasLifecycleCallbacks]
 class Compte implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -231,5 +232,19 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reservation->removeElement($reservation);
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        // Permet de définir le "createdAt" à la date actuelle à la création d'un nouvel objet. 
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function setUpdatedAtValue(): void
+    {
+        // On met à jour la date à chaque fois que l'objet change
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }
