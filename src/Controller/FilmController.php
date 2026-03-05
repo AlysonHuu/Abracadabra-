@@ -10,6 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+
 
 #[Route('/film')]
 final class FilmController extends AbstractController
@@ -23,13 +27,33 @@ final class FilmController extends AbstractController
     }
 
     #[Route('/new', name: 'app_film_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $film = new Film();
         $form = $this->createForm(FilmType::class, $film);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $imageFile */
+            $imageFile = $form->get('Affiche')->getData();
+
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // On nettoie le nom du fichier pour l'URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                // On déplace le fichier dans le dossier public/uploads/affiches
+                // On utilise bien 'affiches_directory' défini dans services.yaml
+                $imageFile->move(
+                    $this->getParameter('affiches_directory'), 
+                    $newFilename
+                );
+
+                // On enregistre le NOM du fichier (string) dans la propriété Affiche de l'entité
+                $film->setAffiche($newFilename);
+            }
+
             $entityManager->persist($film);
             $entityManager->flush();
 
@@ -51,12 +75,46 @@ final class FilmController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_film_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Film $film, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Film $film, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
+        // 1. On stocke le nom de l'affiche actuelle au cas où on ne la change pas
+        $ancienneAffiche = $film->getAffiche();
+
         $form = $this->createForm(FilmType::class, $film);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $imageFile */
+            $imageFile = $form->get('Affiche')->getData();
+
+            // 2. Si une nouvelle image est uploadée
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('affiches_directory'),
+                        $newFilename
+                    );
+                    
+                    // Optionnel : Supprimer l'ancien fichier physique du dossier pour ne pas encombrer le serveur
+                    if ($ancienneAffiche && file_exists($this->getParameter('affiches_directory').'/'.$ancienneAffiche)) {
+                        unlink($this->getParameter('affiches_directory').'/'.$ancienneAffiche);
+                    }
+
+                    // On met à jour l'entité avec le nouveau nom de fichier
+                    $film->setAffiche($newFilename);
+
+                } catch (FileException $e) {
+                    // Gérer l'erreur si nécessaire
+                }
+            } else {
+                // 3. Si aucune nouvelle image n'est choisie, on garde l'ancienne
+                $film->setAffiche($ancienneAffiche);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_film_index', [], Response::HTTP_SEE_OTHER);

@@ -26,7 +26,7 @@
         <div class="carousel">
             {% for film in films %}
                 <div class="carousel-item">
-                    <img src="{{ film.poster }}" alt="{{ film.titre }}">
+                    <img src="{{ asset('uploads/posters/' ~ film.Affiche) }}" alt="Affiche">                    
                     <div class="film-info">
                         <h3>{{ film.titre }}</h3>
                         <p>⏱ {{ film.duree }} min</p>
