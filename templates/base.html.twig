@@ -1,67 +1,165 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Abracadabra Cinéma{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}I AAM Cinéma{% endblock %}</title>
 
+    <script src="https://kit.fontawesome.com/f6563890e5.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <script src="https://kit.fontawesome.com/f6563890e5.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bordeaux: #8b0000;
+            --dark-bordeaux: #4a0404;
+            --light-gray: #f8f9fa;
+        }
 
+        body {
+            
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            margin: 0;
+        }
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+        /* Navbar avec ton code couleur bordeaux */
+        .custom-navbar {
+            background-color: var(--dark-bordeaux) !important;
+            padding: 0.7rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
 
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 1.4rem;
+            color: #fff !important;
+        }
 
- <link rel="stylesheet" href="{{ asset('abracadabra.css') }}">
+        /* Liens de navigation plus fins */
+        .nav-link {
+            font-size: 0.7rem !important;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.8) !important;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
 
+        .nav-link i {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            display: block;
+        }
 
+        .nav-link:hover {
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+
+        /* --- BARRE DE RECHERCHE MODERNISÉE --- */
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 50px !important;
+            padding: 0.5rem 1rem 0.5rem 2.5rem !important;
+            color: white !important;
+            font-size: 0.9rem;
+            width: 200px;
+            transition: all 0.4s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-input:focus {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.2) !important;
+            box-shadow: 0 0 15px rgba(255,255,255,0.1) !important;
+            outline: none;
+        }
+
+        .search-icon-btn {
+            position: absolute;
+            left: 12px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            transition: color 0.3s;
+        }
+
+        .search-input:focus + .search-icon-btn {
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: #666;
+            padding: 30px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 3px solid var(--bordeaux);
+        }
+    </style>
+
+    <link rel="stylesheet" href="{{ asset('abracadabra.css') }}">
 </head>
 <body>
 
  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">I AAM Cinéma</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
-        aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="{{ path('home') }}">I AMM CINÉMA</a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarScroll">
-        <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+        <ul class="navbar-nav me-auto my-2 my-lg-0">
           <li class="nav-item text-center">
-            <a class="nav-link" href="#"><i class="fa-solid fa-house fa-lg"></i><br>ACCUEIL</a>
-          </li>
-           <li class="nav-item text-center">
-            <a class="nav-link" href="#"><i class="fa-solid fa-film"></i></i></i><br>FILMS</a>
-          </li>
-
-
-
-          <li class="nav-item text-center">
-            <a class="nav-link" href="#"><i class="fa-solid fa-circle-user fa-lg"></i><br>MON COMPTE</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-house"></i>ACCUEIL</a>
           </li>
           <li class="nav-item text-center">
-            <a class="nav-link" href="#"><i class="fa-solid fa-ticket-simple fa-lg"></i><br>MES RÉSERVATIONS</a>
+            <a class="nav-link" href="#"><i class="fa-solid fa-film"></i>FILMS</a>
           </li>
-           
-
-          
+          <li class="nav-item text-center">
+            <a class="nav-link" href="{{ path('login') }}"><i class="fa-solid fa-circle-user"></i>MON COMPTE</a>
+          </li>
+          <li class="nav-item text-center">
+            <a class="nav-link" href="#"><i class="fa-solid fa-ticket-simple"></i>RÉSERVATIONS</a>
+          </li>
         </ul>
 
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Recherche">
-          <button class="btn custom-search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <form class="search-wrapper" role="search">
+            <input class="form-control search-input" type="search" placeholder="Rechercher un film..." aria-label="Search">
+            <button class="search-icon-btn" type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
         </form>
 
       </div>
     </div>
-  </nav>
+ </nav>
 
-  {% block body %}{% endblock %}
+ <div class="main-content">
+    {% block body %}{% endblock %}
+ </div>
 
-  <footer>
-    © 2025 Abracadabra  - La magie au cinéma
-  </footer>
+ <footer>
+    &copy; {{ "now"|date("Y") }} I AMM Cinéma — La magie au cinéma.
+ </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
