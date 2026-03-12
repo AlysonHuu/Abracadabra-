@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil - CinéPlus{% endblock %}
+{% block title %}Accueil - Abracadabra{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -9,19 +9,33 @@
 
 {% block body %}
 
-<div class="hero">
-    <div class="hero-text">
-        <h1>Le charme du vrai cinéma</h1>
-        <a href="#" class="btn">Voir les séances</a>
+<div class="container my-4" style="max-width: 1200px;">
+    <div id="pubCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#pubCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#pubCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#pubCarousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner" style="height: 500px; border-radius: 20px; overflow: hidden;">
+            <div class="carousel-item active h-100">
+                <img src="{{ asset('images/Menu.png') }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Menu">
+            </div>
+            <div class="carousel-item h-100">
+                <img src="{{ asset('images/glace.jpg') }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Glace">
+            </div>
+            <div class="carousel-item h-100">
+                <img src="{{ asset('images/avatar_pub.jpg') }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Avatar">
+            </div>
+        </div>
     </div>
 </div>
 
 
 <section class="carousel-section">
-    <h2>À L'AFFICHE</h2>
+    <h2 class="section-title">À L'AFFICHE</h2>
 
     <div class="carousel-container">
-        <button class="arrow left" onclick="prevSlide()">❮</button>
+        <button class="arrow left-arrow" onclick="prevSlide()">❮</button>
 
         <div class="carousel">
     
@@ -52,7 +66,7 @@
             {% endfor %}
         </div>
 
-        <button class="arrow right" onclick="nextSlide()">❯</button>
+        <button class="arrow right-arrow" onclick="nextSlide()">❯</button>
     </div>
 </section>
 
