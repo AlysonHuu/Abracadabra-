@@ -8,32 +8,33 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>DateDiffusion</th>
-                <th>NbPlaceReservees</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>DeletedAt</th>
-                <th>actions</th>
+                <th>Film</th>
+                <th>Salle</th>
+                <th>Date et Heure</th>
+                <th>Places restantes</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for seance in seances %}
             <tr>
-                <td>{{ seance.id }}</td>
-                <td>{{ seance.DateDiffusion ? seance.DateDiffusion|date('Y-m-d') : '' }}</td>
-                <td>{{ seance.NbPlaceReservees }}</td>
-                <td>{{ seance.createdAt ? seance.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ seance.updatedAt ? seance.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ seance.deletedAt ? seance.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_seance_show', {'id': seance.id}) }}">show</a>
-                    <a href="{{ path('app_seance_edit', {'id': seance.id}) }}">edit</a>
+                {# Grâce au __toString, Twig affiche le Nom du film automatiquement #}
+                <td><strong>{{ seance.film }}</strong></td>
+                <td>{{ seance.salle }}</td>
+                <td>{{ seance.DateSeance ? seance.DateSeance|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ seance.NombrePlacesRestantes }}</td>
+                <td class="actions-cell">
+                    <a href="{{ path('app_seance_show', {'id': seance.id}) }}" class="action-link" title="Voir">👁️</a>
+                    <a href="{{ path('app_seance_edit', {'id': seance.id}) }}" class="action-link" title="Modifier">✏️</a>
+                    <form method="post" action="{{ path('app_seance_delete', {'id': seance.id}) }}" onsubmit="return confirm('Annuler cette séance ?');" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ seance.id) }}">
+                        <button class="action-link" style="background:none; border:none; cursor:pointer;">❌</button>
+                    </form>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="7">no records found</td>
+                <td colspan="5">Aucune séance programmée</td>
             </tr>
         {% endfor %}
         </tbody>

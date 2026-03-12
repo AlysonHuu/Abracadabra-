@@ -8,32 +8,28 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>NbPlaces</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>DeletedAt</th>
-                <th>actions</th>
+                <th>Nom de la Salle</th>
+                <th>Capacité (Places)</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for salle in salles %}
             <tr>
-                <td>{{ salle.id }}</td>
-                <td>{{ salle.Nom }}</td>
+                <td><strong>{{ salle.Nom }}</strong></td>
                 <td>{{ salle.NbPlaces }}</td>
-                <td>{{ salle.createdAt ? salle.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ salle.updatedAt ? salle.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ salle.deletedAt ? salle.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_salle_show', {'id': salle.id}) }}">show</a>
-                    <a href="{{ path('app_salle_edit', {'id': salle.id}) }}">edit</a>
+                <td class="actions-cell">
+                    <a href="{{ path('app_salle_show', {'id': salle.id}) }}" class="action-link" title="Voir">👁️</a>
+                    <a href="{{ path('app_salle_edit', {'id': salle.id}) }}" class="action-link" title="Modifier">✏️</a>
+                    <form method="post" action="{{ path('app_salle_delete', {'id': salle.id}) }}" onsubmit="return confirm('Supprimer cette salle ?');" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ salle.id) }}">
+                        <button class="action-link" style="background:none; border:none; cursor:pointer;">❌</button>
+                    </form>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="7">no records found</td>
+                <td colspan="3">Aucune salle enregistrée</td>
             </tr>
         {% endfor %}
         </tbody>
