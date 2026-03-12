@@ -18,11 +18,14 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 #[Route('/film')]
 final class FilmController extends AbstractController
 {
-    #[Route(name: 'app_film_index', methods: ['GET'])]
+    #[Route('/', name: 'app_film_index', methods: ['GET'])]
     public function index(FilmRepository $filmRepository): Response
     {
         return $this->render('film/index.html.twig', [
-            'films' => $filmRepository->findAll(),
+
+            // On ne récupère que ceux qui n'ont PAS de date de suppression. 
+            // Autrement dit, ceux qui ont étés supprimés ne s'affichent plus. 
+            'films' => $filmRepository->findBy(['deletedAt' => null]),
         ]);
     }
 
@@ -127,13 +130,17 @@ final class FilmController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_film_delete', methods: ['POST'])]
-    public function delete(Request $request, Film $film, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$film->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($film);
-            $entityManager->flush();
-        }
+public function delete(Request $request, Film $film, EntityManagerInterface $entityManager): Response
+{
+    if ($this->isCsrfTokenValid('delete'.$film->getId(), $request->getPayload()->getString('_token'))) {
+        
+        $film->setDeletedAt(new \DateTimeImmutable());
+        
+        $film->setEstDispo(false); 
 
-        return $this->redirectToRoute('app_film_index', [], Response::HTTP_SEE_OTHER);
+        $entityManager->flush();
     }
+
+    return $this->redirectToRoute('app_film_index', [], Response::HTTP_SEE_OTHER);
+}
 }
