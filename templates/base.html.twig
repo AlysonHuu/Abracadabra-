@@ -1,66 +1,33 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Abracadabra Cinéma{% endblock %}</title>
+    <meta charset="UTF-8">
+    <title>{% block title %}CinéPlus{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
 
-
-  <script src="https://kit.fontawesome.com/f6563890e5.js" crossorigin="anonymous"></script>
-
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
- <link rel="stylesheet" href="{{ asset('abracadabra.css') }}">
-
-
+    {% block stylesheets %}{% endblock %}
 </head>
 <body>
 
- <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">I AAM Cinéma</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
-        aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarScroll">
-        <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
-          <li class="nav-item text-center">
-            <a class="nav-link" href="#"><i class="fa-solid fa-house fa-lg"></i><br>ACCUEIL</a>
-          </li>
-           <li class="nav-item text-center">
-            <a class="nav-link" href="#"><i class="fa-solid fa-film"></i></i></i><br>FILMS</a>
-          </li>
-
-
-
-          <li class="nav-item text-center">
-            <a class="nav-link" href="#"><i class="fa-solid fa-circle-user fa-lg"></i><br>MON COMPTE</a>
-          </li>
-          <li class="nav-item text-center">
-            <a class="nav-link" href="#"><i class="fa-solid fa-ticket-simple fa-lg"></i><br>MES RÉSERVATIONS</a>
-          </li>
-           
-
-          
-        </ul>
-
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Recherche">
-          <button class="btn custom-search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-        </form>
-
-      </div>
-    </div>
-  </nav>
+<nav>
+    <h2>CinéPlus</h2>
+    <ul>
+        <li><a href="{{ path('cinema_homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('app_film_index') }}">Films</a></li>
+        <li><a href="{{ path('app_salle_index') }}">Salles</a></li>
+        <li><a href="{{ path('app_seance_index') }}">Séances</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+</nav>
 
   {% block body %}{% endblock %}
 
   <footer>
     © 2025 Abracadabra  - La magie au cinéma
   </footer>
+
+
+{% block javascripts %}{% endblock %}
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>

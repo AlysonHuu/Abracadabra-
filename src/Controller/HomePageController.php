@@ -6,51 +6,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\FilmRepository;
 
 class HomePageController extends AbstractController
 {
-    #[Route('/', name: 'home')] 
-public function index(): Response 
+    #[Route('/', name: 'cinema_homepage')]
+public function index(FilmRepository $filmRepository): Response
 {
-    $films = [
-        [    'id'=> 1,
-            'titre' => 'Inception',
-            'poster' => 'https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg',
-            'duree' => 148,
-            'note' => 5
-        ],
-        [   'id'=>2,
-            'titre' => 'Interstellar',
-            'poster' => 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
-            'duree' => 169,
-            'note' => 4
-        ],
-        [    'id'=>3,
-            'titre' => 'Joker',
-            'poster' => 'https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg',
-            'duree' => 122,
-            'note' => 5
-        ],
-        [   'id'=>4,
-            'titre' => 'The Batman',
-            'poster' => 'https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg',
-            'duree' => 176,
-            'note' => 4
-        ]
-        ,[  'id'=>5,
-            'titre'=>'Avatar 3: De Feu et de Cendre',
-            'poster'=>'https://fr.web.img6.acsta.net/img/52/fb/52fb8f0345af2b0940557aa049ca19fd.jpg',
-            'duree'=>200,
-            'note'=>4
-        
-        
-        
-        
-        ]
-    ];
-
-    return $this->render('homepage.html.twig', [ 
-        'films' => $films
+    // On récupère tous les films de la base de données (Dispo et non-supprimés) 
+    $filmsEnBase = $filmRepository->findBy([
+        'estDispo' => true,
+        'deletedAt' => null 
+    ]);
+    return $this->render('homepage.html.twig', [
+        'films' => $filmsEnBase,
     ]);
 }
 

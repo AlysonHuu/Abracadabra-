@@ -2,6 +2,11 @@
 
 {% block title %}Accueil - Abracadabra{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
+{% endblock %}
+
 {% block body %}
 
 <div class="container my-4" style="max-width: 1200px;">
@@ -32,19 +37,30 @@
     <div class="carousel-container">
         <button class="arrow left-arrow" onclick="prevSlide()">❮</button>
 
-        <div class="carousel films-carousel">
+        <div class="carousel">
+    
             {% for film in films %}
-                <div class="film-item">
-                    <img src="{{ film.poster }}" alt="{{ film.titre }}">
+                <div class="carousel-item">
+                    {# On utilise asset() vers ton nouveau dossier d'affiches #}
+                    <img src="{{ asset('uploads/affiches/' ~ film.Affiche) }}" alt="{{ film.Nom }}">
+                    
                     <div class="film-info">
-                        <h3>{{ film.titre }}</h3>
-                        <p><i class="fa-regular fa-clock"></i> {{ film.duree }} min</p>
+                        <h3>{{ film.Nom }}</h3>
+                        <p>⏱ {{ film.Duree }} min</p>
+
                         <div class="stars">
+                            {# On utilise la propriété Note de ton entité #}
                             {% for i in 1..5 %}
-                                <span class="star {{ i <= film.note ? 'filled' : '' }}">★</span>
+                                {% if i <= film.Note %}
+                                    <span class="star filled">★</span>
+                                {% else %}
+                                    <span class="star">☆</span>
+                                {% endif %}
                             {% endfor %}
                         </div>
-                        <a href="{{ path('film_plus', {'id': film.id}) }}" class="btn-plus">En savoir plus</a>
+
+                        {# Lien vers la page de détails du film (optionnel) #}
+                        <a href="{{ path('app_film_show', {'id': film.id}) }}" class="btn">Réserver</a>
                     </div>
                 </div>
             {% endfor %}
@@ -54,46 +70,11 @@
     </div>
 </section>
 
-<script>
-let index = 0;
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/caroussel.js') }}"></script>
+{% endblock %}
 
-const items = document.querySelectorAll('.films-carousel .film-item');
-
-function updateCarousel() {
-    items.forEach((item, i) => {
-      
-        item.classList.remove('active', 'left', 'right', 'far-left', 'far-right');
-
-        const total = items.length;
-
-      
-        if (i === index) {
-            item.classList.add('active');
-        } else if (i === (index - 1 + total) % total) {
-            item.classList.add('left');
-        } else if (i === (index - 2 + total) % total) {
-            item.classList.add('far-left');
-        } else if (i === (index + 1) % total) {
-            item.classList.add('right');
-        } else if (i === (index + 2) % total) {
-            item.classList.add('far-right');
-        }
-    });
-}
-
-function nextSlide() {
-    index = (index + 1) % items.length;
-    updateCarousel();
-}
-
-function prevSlide() {
-    index = (index - 1 + items.length) % items.length;
-    updateCarousel();
-}
-
-
-document.addEventListener("DOMContentLoaded", updateCarousel);
-</script>
 
 
 {% endblock %}

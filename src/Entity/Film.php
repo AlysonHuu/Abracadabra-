@@ -261,4 +261,9 @@ class Film
     {
         $this->updatedAt = new \DateTimeImmutable();
     }
+
+    public function __toString(): string
+    {
+        return $this->Nom;
+    }
 }

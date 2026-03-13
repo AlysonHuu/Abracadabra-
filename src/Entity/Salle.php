@@ -148,4 +148,9 @@ class Salle
     {
         $this->updatedAt = new \DateTimeImmutable();
     }
+
+    public function __toString(): string
+    {
+        return $this->Nom; // Ou le numéro de la salle
+    }
 }

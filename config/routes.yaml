@@ -9,10 +9,13 @@
 # config/routes.yaml
 
 
+# Importation automatique des routes définies par attributs dans les contrôleurs
 controllers:
-    resource: ../src/Controller/
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
     type: attribute
-
+    
 cinema_homepage:
     path: /
     controller: App\Controller\HomePageController::index

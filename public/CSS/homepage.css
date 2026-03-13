@@ -1,0 +1,142 @@
+/* public/css/homepage.css */
+
+.carousel-section {
+    padding: 80px;
+    text-align: center;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 750px; /* On passe de 650 à 750px */
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+
+.carousel {
+    position: relative;
+    width: 800px;
+    height: 700px; /* On passe de 600 à 700px */
+}
+
+.carousel-item {
+    position: absolute;
+    width: 300px; 
+    height: 650px; /* On passe de 550 à 650px pour laisser de la place au texte */
+    transition: 0.5s;
+    opacity: 0;
+    transform: scale(0.8);
+    text-align: center;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 400px; /* Taille d'image fixe pour tout le monde */
+    object-fit: cover; /* Recadre proprement les images horizontales ou verticales */
+    border-radius: 15px 15px 0 0;
+}
+
+.carousel-item.active {
+    transform: scale(1);
+    opacity: 1;
+    left: 250px;
+    z-index: 3;
+}
+
+.carousel-item.left {
+    transform: scale(0.85);
+    opacity: 0.3;
+    left: 0;
+    z-index: 2;
+}
+
+.carousel-item.right {
+    transform: scale(0.85);
+    opacity: 0.3;
+    left: 500px;
+    z-index: 2;
+}
+
+.film-info {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.film-info p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 10px 0;
+    /* Technique du "Line Clamp" pour 3 lignes maximum */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 4.5em; /* Assure une hauteur constante pour l'alignement */
+}
+
+.stars {
+    margin: 10px 0;
+}
+
+.star {
+    font-size: 22px;
+    color: #ccc;
+}
+
+.star.filled {
+    color: gold;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+/* --- CORRECTION DES FLÈCHES --- */
+
+.arrow {
+    position: absolute;
+    /* Calcul : 50px (marge haute du flex) + 200px (milieu de l'image) = 250px */
+    top: 250px; 
+    transform: translateY(-50%);
+    
+    background: #8B0000;
+    color: white;
+    border: none;
+    font-size: 30px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 100; /* Toujours au premier plan */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    
+}
+
+.arrow.left {
+    left: 10%; /* Ajuste selon ton envie pour l'écarter des films */
+}
+
+.arrow.right {
+    right: 10%;
+}
+
+.arrow:hover {
+    background: #a80000;
+    transform: translateY(-50%) scale(1.1);
+}

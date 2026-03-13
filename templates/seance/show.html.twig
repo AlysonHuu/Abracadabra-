@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Seance{% endblock %}
+
+{% block body %}
+    <h1>Seance</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ seance.id }}</td>
+            </tr>
+            <tr>
+                <th>DateDiffusion</th>
+                <td>{{ seance.DateDiffusion ? seance.DateDiffusion|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>NbPlaceReservees</th>
+                <td>{{ seance.NbPlaceReservees }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ seance.createdAt ? seance.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ seance.updatedAt ? seance.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DeletedAt</th>
+                <td>{{ seance.deletedAt ? seance.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_seance_index') }}">back to list</a>
+
+    <a href="{{ path('app_seance_edit', {'id': seance.id}) }}">edit</a>
+
+    {{ include('seance/_delete_form.html.twig') }}
+{% endblock %}
