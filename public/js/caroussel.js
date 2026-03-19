@@ -1,7 +1,9 @@
 let index = 0;
-const items = document.querySelectorAll('.carousel-item');
+const items = document.querySelectorAll('.movie-card');
 
 function updateCarousel() {
+    if (items.length === 0) return;
+    
     items.forEach((item, i) => {
         item.classList.remove('active', 'left', 'right');
         if (i === index) {

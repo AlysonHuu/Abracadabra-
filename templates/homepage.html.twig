@@ -31,42 +31,30 @@
 </div>
 
 
+{# ... après le carrousel de pub ... #}
+
 <section class="carousel-section">
     <h2 class="section-title">À L'AFFICHE</h2>
 
     <div class="carousel-container">
-        <button class="arrow left-arrow" onclick="prevSlide()">❮</button>
+        <button class="arrow left" onclick="prevSlide()">❮</button>
 
-        <div class="carousel">
-    
+        <div class="movie-carousel"> {# Renommé ici #}
             {% for film in films %}
-                <div class="carousel-item">
-                    {# On utilise asset() vers ton nouveau dossier d'affiches #}
-                    <img src="{{ asset('uploads/affiches/' ~ film.Affiche) }}" alt="{{ film.Nom }}">
+                <div class="movie-card"> {# Renommé ici #}
+                    <img src="{{ film.Affiche ? asset('uploads/affiches/' ~ film.Affiche) : asset('images/no-poster.jpg') }}" alt="{{ film.Nom }}">
                     
                     <div class="film-info">
                         <h3>{{ film.Nom }}</h3>
                         <p>⏱ {{ film.Duree }} min</p>
-
-                        <div class="stars">
-                            {# On utilise la propriété Note de ton entité #}
-                            {% for i in 1..5 %}
-                                {% if i <= film.Note %}
-                                    <span class="star filled">★</span>
-                                {% else %}
-                                    <span class="star">☆</span>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-
-                        {# Lien vers la page de détails du film (optionnel) #}
+                        {# ... reste du code des étoiles ... #}
                         <a href="{{ path('app_film_show', {'id': film.id}) }}" class="btn">Réserver</a>
                     </div>
                 </div>
             {% endfor %}
         </div>
 
-        <button class="arrow right-arrow" onclick="nextSlide()">❯</button>
+        <button class="arrow right" onclick="nextSlide()">❯</button>
     </div>
 </section>
 

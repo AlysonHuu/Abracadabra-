@@ -8,22 +8,24 @@
 .carousel-container {
     position: relative;
     width: 100%;
-    height: 750px; /* On passe de 650 à 750px */
+    height: 750px; /* Espace total pour tes films */
     display: flex;
     align-items: center; 
     justify-content: center;
 }
 
-.carousel {
+/* Changement de .carousel en .movie-carousel pour éviter le conflit Bootstrap */
+.movie-carousel {
     position: relative;
     width: 800px;
-    height: 700px; /* On passe de 600 à 700px */
+    height: 700px;
 }
 
-.carousel-item {
+/* Changement de .carousel-item en .movie-card */
+.movie-card {
     position: absolute;
     width: 300px; 
-    height: 650px; /* On passe de 550 à 650px pour laisser de la place au texte */
+    height: 650px; /* Hauteur fixe pour l'uniformité */
     transition: 0.5s;
     opacity: 0;
     transform: scale(0.8);
@@ -36,28 +38,29 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.carousel-item img {
+.movie-card img {
     width: 100%;
-    height: 400px; /* Taille d'image fixe pour tout le monde */
-    object-fit: cover; /* Recadre proprement les images horizontales ou verticales */
+    height: 400px; /* Hauteur d'affiche fixe */
+    object-fit: cover;
     border-radius: 15px 15px 0 0;
 }
 
-.carousel-item.active {
+/* Positions pour l'animation du carrousel */
+.movie-card.active {
     transform: scale(1);
     opacity: 1;
     left: 250px;
     z-index: 3;
 }
 
-.carousel-item.left {
+.movie-card.left {
     transform: scale(0.85);
     opacity: 0.3;
     left: 0;
     z-index: 2;
 }
 
-.carousel-item.right {
+.movie-card.right {
     transform: scale(0.85);
     opacity: 0.3;
     left: 500px;
@@ -72,17 +75,17 @@
     justify-content: space-between;
 }
 
+/* Troncature de la description à 3 lignes */
 .film-info p {
     font-size: 0.9rem;
     color: #555;
     margin: 10px 0;
-    /* Technique du "Line Clamp" pour 3 lignes maximum */
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    height: 4.5em; /* Assure une hauteur constante pour l'alignement */
+    height: 4.5em; 
 }
 
 .stars {
@@ -98,19 +101,11 @@
     color: gold;
 }
 
-.btn {
-    display: inline-block;
-    margin-top: 10px;
-}
-
-/* --- CORRECTION DES FLÈCHES --- */
-
+/* Style des flèches de navigation */
 .arrow {
     position: absolute;
-    /* Calcul : 50px (marge haute du flex) + 200px (milieu de l'image) = 250px */
-    top: 250px; 
+    top: 250px; /* Centrage vertical sur l'image */
     transform: translateY(-50%);
-    
     background: #8B0000;
     color: white;
     border: none;
@@ -119,17 +114,16 @@
     height: 50px;
     cursor: pointer;
     border-radius: 50%;
-    z-index: 100; /* Toujours au premier plan */
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    
 }
 
 .arrow.left {
-    left: 10%; /* Ajuste selon ton envie pour l'écarter des films */
+    left: 10%;
 }
 
 .arrow.right {
@@ -139,4 +133,14 @@
 .arrow:hover {
     background: #a80000;
     transform: translateY(-50%) scale(1.1);
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: #8B0000;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
 }
