@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Salle index{% endblock %}
+
+{% block body %}
+    <h1>Salle index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom de la Salle</th>
+                <th>Capacité (Places)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for salle in salles %}
+            <tr>
+                <td><strong>{{ salle.Nom }}</strong></td>
+                <td>{{ salle.NbPlaces }}</td>
+                <td class="actions-cell">
+                    <a href="{{ path('app_salle_show', {'id': salle.id}) }}" class="action-link" title="Voir">👁️</a>
+                    <a href="{{ path('app_salle_edit', {'id': salle.id}) }}" class="action-link" title="Modifier">✏️</a>
+                    <form method="post" action="{{ path('app_salle_delete', {'id': salle.id}) }}" onsubmit="return confirm('Supprimer cette salle ?');" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ salle.id) }}">
+                        <button class="action-link" style="background:none; border:none; cursor:pointer;">❌</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Aucune salle enregistrée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_salle_new') }}">Create new</a>
+{% endblock %}

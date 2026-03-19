@@ -1,0 +1,25 @@
+2026-02-12 14:12:03.037 CET [9520] LOG:  démarrage de PostgreSQL 18.1 on x86_64-windows, compiled by msvc-19.44.35219, 64-bit
+2026-02-12 14:12:03.041 CET [9520] LOG:  en écoute sur IPv6, adresse « ::1 », port 5432
+2026-02-12 14:12:03.041 CET [9520] LOG:  en écoute sur IPv4, adresse « 127.0.0.1 », port 5432
+2026-02-12 14:12:03.144 CET [32464] LOG:  le système de bases de données a été arrêté à 2026-02-12 14:11:29 CET
+2026-02-12 14:12:03.153 CET [9520] LOG:  le système de bases de données est prêt pour accepter les connexions
+2026-02-12 14:17:03.146 CET [29516] LOG:  début du checkpoint : time
+2026-02-12 14:18:21.700 CET [11032] ERREUR:  la base de données « abracadabra » existe déjà
+2026-02-12 14:18:21.700 CET [11032] INSTRUCTION :  CREATE DATABASE "abracadabra"
+2026-02-12 14:18:21.700 CET [21180] ERREUR:  la base de données « abracadabra » existe déjà
+2026-02-12 14:18:21.700 CET [21180] INSTRUCTION :  CREATE DATABASE "abracadabra"
+2026-02-12 14:18:56.532 CET [29516] LOG:  checkpoint complete: wrote 1027 buffers (6.3%), wrote 3 SLRU buffers; 1 WAL file(s) added, 0 removed, 0 recycled; write=112.480 s, sync=0.736 s, total=113.396 s; sync files=312, longest=0.046 s, average=0.003 s; distance=4989 kB, estimate=4989 kB; lsn=0/1CCBAC0, redo lsn=0/1CCBA30
+2026-02-12 14:49:31.275 CET [9520] LOG:  processus en tâche de fond « logical replication launcher » (PID 34548) a été arrêté par l'exception 0xC000013A
+2026-02-12 14:49:31.275 CET [9520] ASTUCE :  Voir le fichier d'en-tête C « ntstatus.h » pour une description de la valeur
+	hexadécimale.
+2026-02-12 14:49:31.276 CET [9520] LOG:  arrêt des autres processus serveur actifs
+2026-02-12 14:49:31.321 CET [9520] LOG:  tous les processus serveur sont arrêtés ; réinitialisation
+2026-02-12 14:49:31.419 CET [12700] LOG:  le système de bases de données a été interrompu ; dernier lancement connu à 2026-02-12 14:18:56 CET
+2026-02-12 14:49:36.624 CET [12700] LOG:  le système de bases de données n'a pas été arrêté proprement ; restauration
+	automatique en cours
+2026-02-12 14:49:36.634 CET [12700] LOG:  la ré-exécution commence à 0/1CCBA30
+2026-02-12 14:49:36.634 CET [12700] LOG:  longueur invalide de l'enregistrement à 0/1CCBB70 : attendait au moins 24, a eu 0
+2026-02-12 14:49:36.635 CET [12700] LOG:  rejeu exécuté à 0/1CCBB38 utilisation système : CPU : utilisateur : 0.00 s, système : 0.00 s, temps passé : 0.00 s
+2026-02-12 14:49:36.649 CET [4644] LOG:  début du checkpoint : end-of-recovery immediate wait
+2026-02-12 14:49:36.678 CET [4644] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.007 s, total=0.037 s; sync files=2, longest=0.004 s, average=0.004 s; distance=0 kB, estimate=0 kB; lsn=0/1CCBB70, redo lsn=0/1CCBB70
+2026-02-12 14:49:36.701 CET [9520] LOG:  le système de bases de données est prêt pour accepter les connexions

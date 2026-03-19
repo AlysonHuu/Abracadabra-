@@ -1,0 +1,146 @@
+/* public/css/homepage.css */
+
+.carousel-section {
+    padding: 80px;
+    text-align: center;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 750px; /* Espace total pour tes films */
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+
+/* Changement de .carousel en .movie-carousel pour éviter le conflit Bootstrap */
+.movie-carousel {
+    position: relative;
+    width: 800px;
+    height: 700px;
+}
+
+/* Changement de .carousel-item en .movie-card */
+.movie-card {
+    position: absolute;
+    width: 300px; 
+    height: 650px; /* Hauteur fixe pour l'uniformité */
+    transition: 0.5s;
+    opacity: 0;
+    transform: scale(0.8);
+    text-align: center;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.movie-card img {
+    width: 100%;
+    height: 400px; /* Hauteur d'affiche fixe */
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+}
+
+/* Positions pour l'animation du carrousel */
+.movie-card.active {
+    transform: scale(1);
+    opacity: 1;
+    left: 250px;
+    z-index: 3;
+}
+
+.movie-card.left {
+    transform: scale(0.85);
+    opacity: 0.3;
+    left: 0;
+    z-index: 2;
+}
+
+.movie-card.right {
+    transform: scale(0.85);
+    opacity: 0.3;
+    left: 500px;
+    z-index: 2;
+}
+
+.film-info {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Troncature de la description à 3 lignes */
+.film-info p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 10px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 4.5em; 
+}
+
+.stars {
+    margin: 10px 0;
+}
+
+.star {
+    font-size: 22px;
+    color: #ccc;
+}
+
+.star.filled {
+    color: gold;
+}
+
+/* Style des flèches de navigation */
+.arrow {
+    position: absolute;
+    top: 250px; /* Centrage vertical sur l'image */
+    transform: translateY(-50%);
+    background: #8B0000;
+    color: white;
+    border: none;
+    font-size: 30px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.arrow.left {
+    left: 10%;
+}
+
+.arrow.right {
+    right: 10%;
+}
+
+.arrow:hover {
+    background: #a80000;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: #8B0000;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+}

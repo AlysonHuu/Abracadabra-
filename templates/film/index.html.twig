@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Film index{% endblock %}
+
+{% block body %}
+    <h1>Film index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Affiche</th>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Genre</th>
+                <th>Disponibilité</th>
+                <th>Durée</th>
+                <th>Créé le</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for film in films %}
+            <tr>
+                {# 1. Affichage de l'image #}
+                <td>
+                    {% if film.Affiche %}
+                        <img src="{{ asset('uploads/affiches/' ~ film.Affiche) }}" 
+                            alt="{{ film.Nom }}" 
+                            style="width: 80px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    {% else %}
+                        <span style="color: #ccc; font-style: italic;">Pas d'affiche</span>
+                    {% endif %}
+                </td>
+
+                {# 2. Nom #}
+                <td><strong>{{ film.Nom }}</strong></td>
+
+                {# 3. Description (avec une limite de caractères pour ne pas casser le tableau) #}
+                <td>{{ film.Description|slice(0, 50) }}...</td>
+
+                {# 4. Genre #}
+                <td>{{ film.Genre }}</td>
+
+                {# 5. Pastille de disponibilité #}
+                <td style="text-align: center;">
+                    {% if film.EstDispo %}
+                        <span title="Disponible" style="font-size: 1.2rem; color: green;">🟢</span>
+                    {% else %}
+                        <span title="Indisponible" style="font-size: 1.2rem; color: red;">🔴</span>
+                    {% endif %}
+                </td>
+
+                {# 6. Durée avec "min" #}
+                <td>{{ film.Duree }} min</td>
+
+                {# 7. Date de création formatée #}
+                <td>{{ film.CreatedAt ? film.CreatedAt|date('d/m/Y H:i') : '' }}</td>
+
+                {# Actions #}
+                 
+                 <td class="actions-cell">
+                {# Bouton Voir (Détails) #}
+                <a href="{{ path('app_film_show', {'id': film.id}) }}" class="action-link" title="Détails">👁️</a>
+
+                {# Bouton Modifier (Crayon) #}
+                <a href="{{ path('app_film_edit', {'id': film.id}) }}" class="action-link" title="Modifier">✏️</a>
+
+                {# Bouton Supprimer (Croix) #}
+                <form method="  post" action="{{ path('app_film_delete', {'id': film.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce film ?');" style="display:inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ film.id) }}">
+                    <button class="action-link" style="background: none; border: none; padding: 0; cursor: pointer;" title="Supprimer">
+                        ❌
+                    </button>
+                </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">Aucun film trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_film_new') }}">Create new</a>
+{% endblock %}

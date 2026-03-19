@@ -1,0 +1,148 @@
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5efe6;
+            color: #2c2c2c;
+        }
+
+        /* NAVBAR */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        nav h2 {
+            margin: 0;
+            color: #8B0000;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            margin: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #8B0000;
+        }
+
+        .hero {
+            height: 500px;
+            background: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            color: white;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .hero-text {
+            position: relative;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: #8B0000;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #a80000;
+        }
+
+        /* FILMS */
+        .section {
+            padding: 60px 80px;
+            text-align: center;
+        }
+
+        .films {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: white;
+            width: 220px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        footer {
+            background: #8B0000;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+    /* ********************* CSS Boutons CRUD *************/ 
+
+    .actions-cell {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+        min-width: 100px;
+    }
+
+    .action-link {
+        font-size: 1.2rem;
+        text-decoration: none;
+        transition: transform 0.2s;
+        display: inline-block;
+    }
+
+    .action-link:hover {
+        transform: scale(1.3); /* Petit effet de zoom au survol */
+    }
