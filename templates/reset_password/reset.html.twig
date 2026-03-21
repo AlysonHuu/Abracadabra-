@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau mot de passe | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        .password-container { position: relative; }
+        .toggle-btn {
+            position: absolute;
+            right: 15px;
+            top: 42px;
+            cursor: pointer;
+            color: #8b0000;
+            z-index: 10;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="split-container">
+    <div class="left-side">
+        <h2>Sécurité renforcée</h2>
+        <p>Choisissez un nouveau mot de passe robuste pour protéger votre compte et vos réservations.</p>
+    </div>
+
+    <div class="right-side">
+        <div class="login-box">
+            <h1>Réinitialisation</h1>
+
+            {{ form_start(resetForm) }}
+                <div class="form-group password-container">
+                    {{ form_label(resetForm.plainPassword.first) }}
+                    {{ form_widget(resetForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                    <i class="fa-solid fa-eye toggle-btn"></i>
+                    {{ form_errors(resetForm.plainPassword.first) }}
+                </div>
+
+                <div class="form-group password-container">
+                    {{ form_label(resetForm.plainPassword.second) }}
+                    {{ form_widget(resetForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                    <i class="fa-solid fa-eye toggle-btn"></i>
+                </div>
+
+                <button type="submit" class="btn-login" style="margin-top: 20px;">Mettre à jour le mot de passe</button>
+            {{ form_end(resetForm) }}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script intelligent pour l'œil : fonctionne sur tous les boutons présents [cite: 43]
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            if (input.type === "password") {
+                input.type = "text";
+                this.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = "password";
+                this.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    });
+</script>
+{% endblock %}

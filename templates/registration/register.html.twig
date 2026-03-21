@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        .password-row { position: relative; }
+        .toggle-btn {
+            position: absolute;
+            right: 15px;
+            top: 42px;
+            cursor: pointer;
+            color: #8b0000;
+            z-index: 10;
+        }
+        .form-check { margin-top: 15px; font-size: 0.9rem; }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="split-container">
+    <div class="left-side">
+        <h2>Bienvenue !</h2>
+        <p>Pas encore de compte ? Venez profiter du spectacle, rejoignez-nous !</p>
+    </div>
+
+    <div class="right-side">
+        <div class="login-box">
+            <h1>Inscription</h1>
+
+            {{ form_start(registrationForm) }}
+                <div class="form-group">{{ form_row(registrationForm.nom) }}</div>
+                <div class="form-group">{{ form_row(registrationForm.prenom) }}</div>
+                <div class="form-group">{{ form_row(registrationForm.email) }}</div>
+                
+                <div class="form-group password-row">
+                    {{ form_label(registrationForm.plainPassword.first) }}
+                    {{ form_widget(registrationForm.plainPassword.first, {'attr': {'id': 'pass1'}}) }}
+                    <i class="fa-solid fa-eye toggle-btn" onclick="toggle('pass1', this)"></i>
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+
+                <div class="form-group password-row">
+                    {{ form_label(registrationForm.plainPassword.second) }}
+                    {{ form_widget(registrationForm.plainPassword.second, {'attr': {'id': 'pass2'}}) }}
+                    <i class="fa-solid fa-eye toggle-btn" onclick="toggle('pass2', this)"></i>
+                </div>
+
+                <div class="form-check">
+                    {{ form_widget(registrationForm.agreeTerms) }}
+                    {{ form_label(registrationForm.agreeTerms) }}
+                </div>
+
+                <button type="submit" class="btn-login" style="margin-top:20px;">Créer mon compte</button>
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // On remonte au parent (form-group) puis on cherche l'input à l'intérieur
+            const input = this.parentElement.querySelector('input');
+            
+            if (input.type === "password") {
+                input.type = "text";
+                this.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = "password";
+                this.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    });
+</script>
+{% endblock %}

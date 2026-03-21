@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Compte | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        .reservations-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding: 10px 0;
+            scrollbar-width: thin;
+        }
+        .reservation-card {
+            flex: 0 0 150px;
+            text-align: center;
+        }
+        .reservation-card img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .btn-danger-custom {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="split-container">
+    <div class="left-side">
+        <h2>Mes Réservations</h2>
+        
+        {% if user.reservation is empty %}
+            <p>Vous n'avez pas de réservation pour le moment.</p>
+        {% else %}
+            <div class="reservations-scroll">
+                {% for seance in user.reservation %}
+                    <div class="reservation-card">
+                        <img src="{{ asset('uploads/images/' ~ seance.film.affiche) }}" alt="{{ seance.film.titre }}">
+                        <p style="font-size: 0.8rem; margin-top: 5px;">{{ seance.film.titre }}<br>
+                        <strong>{{ seance.dateProjection|date('d/m H:i') }}</strong></p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="right-side">
+        <div class="login-box">
+            <h1>Mon Profil</h1>
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+
+            {{ form_start(form) }}
+                <div class="form-group">{{ form_row(form.email) }}</div>
+                <div class="form-group">{{ form_row(form.nom) }}</div>
+                <div class="form-group">{{ form_row(form.prenom) }}</div>
+                <hr>
+                <div class="form-group">{{ form_row(form.plainPassword) }}</div>
+                <button type="submit" class="btn-login">Mettre à jour</button>
+            {{ form_end(form) }}
+
+            <form method="post" action="{{ path('app_mon_compte_delete') }}" onsubmit="return confirm('Êtes-vous vraiment sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
+                <button class="btn-danger-custom">Supprimer mon compte</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

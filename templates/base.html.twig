@@ -28,20 +28,39 @@
       <div class="collapse navbar-collapse" id="navContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link" href="{{ path('cinema_homepage') }}">Accueil</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ path('app_film_index') }}">Films</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ path('app_salle_index') }}">Salles</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ path('app_seance_index') }}">Séances</a></li>
+          
+          {# Menu réservé UNIQUEMENT aux administrateurs #}
+          {% if is_granted('ROLE_ADMIN') %}
+            <li class="nav-item"><a class="nav-link" href="{{ path('app_film_index') }}">FILMS</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ path('app_salle_index') }}">SALLES</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ path('app_seance_index') }}">SÉANCES</a></li>
+          {% endif %}
         </ul>
 
-        {# RECHERCHE REDESSINÉE #}
-        <form class="search-container" role="search">
+        {# BARRE DE RECHERCHE #}
+        <form class="search-container me-3" role="search">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
             <input class="form-control search-input" type="search" placeholder="Rechercher un film..." aria-label="Search">
         </form>
 
-        <a href="{{ path('login') }}" class="ms-3 text-white">
-            <i class="fa-solid fa-circle-user fa-lg"></i>
-        </a>
+        {# GESTION DU COMPTE #}
+        <div class="d-flex align-items-center">
+            {% if app.user %}
+                {# Si l'utilisateur est connecté : Icône Mon Compte (Dorée) et Déconnexion #}
+                <a href="{{ path('app_mon_compte') }}" class="text-white" title="Mon Compte">
+                    <i class="fa-solid fa-circle-user fa-lg" style="color: #FFD700;"></i>
+                </a>
+                <a href="{{ path('app_logout') }}" class="ms-3 text-white" title="Déconnexion">
+                    <i class="fa-solid fa-power-off"></i>
+                </a>
+            {% else %}
+                {# Si l'utilisateur n'est pas connecté : Icône de connexion standard #}
+                <a href="{{ path('app_login') }}" class="text-white" title="Connexion">
+                    <i class="fa-solid fa-circle-user fa-lg"></i>
+                </a>
+            {% endif %}
+        </div>
+
       </div>
     </div>
  </nav>

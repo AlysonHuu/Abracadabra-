@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="split-container">
+<div class="left-side">
+    <div class="slider-container">
+        <div class="slide active">
+            <h2>I AAM Cinéma</h2>
+            <!--<p>Profitez d'un moment en famille en regardant un film !</p>-->
+        </div>
+        <div class="slide">
+            <h2>Offre du moment ! <br> UNE PLACE ACHETE = UNE PLACE OFFERTE  </h2>
+            <!--<p>Profitez d'un moment en amoureux a moindre prix ! <br> UNE PLACE ACHETE = UNE PLACE OFFERTE </p>-->
+        </div>
+        <div class="slide">
+            <h2>En ce moment en salle ! <br> <b> Avatar : de Feu et de Cendres</b></h2>
+           
+        </div>
+    </div>
+    
+    <div class="dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+    </div>
+</div>
+
+    <div class="right-side">
+        <div class="login-box">
+            <h1>Connexion</h1>
+
+                {# 1. Affichage de l'erreur si elle existe #}
+            {% if error is defined and error %}
+                <div style="background: #ffdada; color: #8b0000; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+
+            {% for message in app.flashes('success') %}
+                <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <form method="post">
+
+                {# 2. Ajout du jeton CSRF (Indispensable pour AppAuthenticator) #}
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div class="form-group">
+                    <label>Identifiant (Email)</label>
+                    {# 3. On utilise value="{{ last_username }}" pour ne pas avoir à retaper l'email en cas d'erreur #}
+                    <input type="email" name="email" value="{{ last_username }}" placeholder="jean.dupont@mail.com" required autofocus>
+ 
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                    <a href="{{ path('app_forgot_password') }}" style="font-size: 0.8rem; color: #8b0000;">Mot de passe oublié ?</a>
+                </div>
+                
+
+                <div class="form-group checkbox-group" style="margin-bottom: 20px; font-size: 0.9rem; color: #555;">
+                    <label style="display: flex; align-items: center; cursor: pointer; gap: 10px;">
+                        <input type="checkbox" name="_remember_me" style="width: auto; cursor: pointer;">
+                        Se souvenir de moi
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-login">Accéder à mon espace</button>
+                <div style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: #555;">
+                    Pas encore de compte ? 
+                    <a href="{{ path('app_register') }}" style="color: #8b0000; font-weight: bold; text-decoration: none;">
+                        Venez profiter du spectacle, rejoignez-nous !
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    let currentSlide = 0;
+
+    function showSlide(index) {
+        // On enlève la classe active partout
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+
+        // On l'ajoute sur le slide actuel
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    // Change de message toutes les 4 secondes
+    setInterval(nextSlide, 4000);
+</script>
+{% endblock %}
