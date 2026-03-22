@@ -237,6 +237,9 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $googleId = null;
+
     public function getResetToken(): ?string
     {
         return $this->resetToken;
@@ -245,6 +248,18 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetToken(?string $resetToken): static
     {
         $this->resetToken = $resetToken;
+        return $this;
+    }
+
+    public function getGoogleId(): ?string
+    {
+        return $this->googleId;
+    }
+
+    public function setGoogleId(?string $googleId): static
+    {
+        $this->googleId = $googleId;
+
         return $this;
     }
 }

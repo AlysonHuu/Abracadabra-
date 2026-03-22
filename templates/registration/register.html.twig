@@ -4,17 +4,63 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    
     <style>
+        /* FIX LAYOUT : On permet à la page de grandir au-delà de l'écran */
+        .split-container {
+            height: auto !important; /* Annule le 100vh qui bloquait la hauteur */
+            min-height: 100vh;      /* Garde au moins toute la hauteur de l'écran */
+        }
+
+        .right-side {
+            align-items: flex-start !important; /* Aligne le formulaire vers le haut */
+            padding-top: 50px !important;
+            padding-bottom: 100px !important; /* Espace de sécurité pour ne pas toucher le footer */
+            overflow-y: auto;
+        }
+
+        .login-box {
+            margin: 0 auto; /* Centre la box horizontalement */
+        }
+
+        /* Optimisation de l'espace pour que ce soit moins "long" */
+        .form-group { 
+            margin-bottom: 12px !important; 
+        }
+
         .password-row { position: relative; }
         .toggle-btn {
             position: absolute;
             right: 15px;
-            top: 42px;
+            top: 38px; /* Ajusté pour les nouveaux espacements */
             cursor: pointer;
             color: #8b0000;
             z-index: 10;
         }
-        .form-check { margin-top: 15px; font-size: 0.9rem; }
+
+        .form-check { 
+            margin-top: 10px; 
+            font-size: 0.9rem; 
+        }
+
+        /* Styles de centrage pour le bloc Google */
+        .google-login-container {
+            margin-top: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .separator {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 12px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 {% endblock %}
 
@@ -22,12 +68,12 @@
 <div class="split-container">
     <div class="left-side">
         <h2>Bienvenue !</h2>
-        <p>Pas encore de compte ? Venez profiter du spectacle, rejoignez-nous !</p>
+        <p>Pas encore de compte ?<br>Venez profiter du spectacle, rejoignez-nous !</p>
     </div>
 
     <div class="right-side">
         <div class="login-box">
-            <h1>Inscription</h1>
+            <h1>S'inscrire</h1>
 
             {{ form_start(registrationForm) }}
                 <div class="form-group">{{ form_row(registrationForm.nom) }}</div>
@@ -37,14 +83,14 @@
                 <div class="form-group password-row">
                     {{ form_label(registrationForm.plainPassword.first) }}
                     {{ form_widget(registrationForm.plainPassword.first, {'attr': {'id': 'pass1'}}) }}
-                    <i class="fa-solid fa-eye toggle-btn" onclick="toggle('pass1', this)"></i>
+                    <i class="fa-solid fa-eye toggle-btn"></i>
                     {{ form_errors(registrationForm.plainPassword.first) }}
                 </div>
 
                 <div class="form-group password-row">
                     {{ form_label(registrationForm.plainPassword.second) }}
                     {{ form_widget(registrationForm.plainPassword.second, {'attr': {'id': 'pass2'}}) }}
-                    <i class="fa-solid fa-eye toggle-btn" onclick="toggle('pass2', this)"></i>
+                    <i class="fa-solid fa-eye toggle-btn"></i>
                 </div>
 
                 <div class="form-check">
@@ -52,8 +98,29 @@
                     {{ form_label(registrationForm.agreeTerms) }}
                 </div>
 
-                <button type="submit" class="btn-login" style="margin-top:20px;">Créer mon compte</button>
+                <button type="submit" class="btn-login" style="margin-top:15px;">Créer mon compte</button>
             {{ form_end(registrationForm) }}
+
+            <div class="google-login-container">
+                <p class="separator">— OU —</p>
+                
+                <a href="{{ path('connect_google_start') }}" class="btn-google-standard">
+                    <svg class="google-icon" viewBox="0 0 48 48" style="width:18px; height:18px; margin-right:10px;">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                    </svg>
+                    <span class="google-btn-text">S'inscrire avec Google</span>
+                </a>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: #555;">
+                Déjà inscrit ? 
+                <a href="{{ path('app_login') }}" style="color: #8b0000; font-weight: bold; text-decoration: none;">
+                    Connectez-vous ici
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -61,9 +128,7 @@
 <script>
     document.querySelectorAll('.toggle-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            // On remonte au parent (form-group) puis on cherche l'input à l'intérieur
             const input = this.parentElement.querySelector('input');
-            
             if (input.type === "password") {
                 input.type = "text";
                 this.classList.replace('fa-eye', 'fa-eye-slash');

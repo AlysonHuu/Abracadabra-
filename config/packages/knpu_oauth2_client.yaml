@@ -1,0 +1,12 @@
+# config/packages/knpu_oauth2_client.yaml
+knpu_oauth2_client:
+    clients:
+        # C'est ce nom "google" que le contrôleur cherche
+        google:
+            type: google
+            # Ces variables sont celles que tu as mises dans ton .env
+            client_id: '%env(GOOGLE_CLIENT_ID)%'
+            client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
+            # C'est la route où Google renvoie l'utilisateur
+            redirect_route: connect_google_check
+            redirect_params: {}
