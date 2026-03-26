@@ -1,13 +1,176 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Seance{% endblock %}
+{% block title %}Modifier la Séance | Admin{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_red.css">
+    <style>
+        .edit-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 40px auto;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .poster-preview-side {
+            flex: 1;
+            background: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border-right: 1px solid #eee;
+        }
+
+        #current-poster-img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .form-side {
+            flex: 1.5;
+            padding: 40px;
+            position: relative;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .form-header h1 { color: #8b0000; margin: 0; font-size: 1.8rem; }
+
+        .dt-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .input-icon { position: relative; }
+        .input-icon i { position: absolute; right: 15px; top: 15px; color: #8b0000; }
+        
+        .btn-update { 
+            background: #8b0000; color: white; border: none; padding: 15px; 
+            border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; 
+            margin-top: 20px; transition: 0.3s; 
+        }
+        .btn-update:hover { background: #a00000; transform: translateY(-2px); }
+
+        .btn-delete-mini {
+            background: #fee2e2; color: #dc2626; border: none;
+            width: 35px; height: 35px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-delete-mini:hover { background: #fecaca; transform: scale(1.1); }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Edit Seance</h1>
+<div class="container">
+    <div class="edit-card">
+        {# SECTION GAUCHE : APERÇU DYNAMIQUE #}
+        <div class="poster-preview-side">
+            <p style="color: #666; font-size: 0.8rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Aperçu du film</p>
+            <img id="current-poster-img" src="{{ asset('uploads/affiches/' ~ seance.film.affiche) }}" alt="Affiche">
+        </div>
 
-    {{ include('seance/_form.html.twig', {'button_label': 'Update'}) }}
+        {# SECTION DROITE : FORMULAIRE #}
+        <div class="form-side">
+            <div class="form-header">
+                <div>
+                    <h1>Modifier la séance</h1>
+                    <p style="color: #999; font-size: 0.8rem;">ID Séance : #{{ seance.id }}</p>
+                </div>
+                
+                {# Petit bouton de suppression #}
+                <form method="post" action="{{ path('app_seance_delete', {'id': seance.id}) }}" onsubmit="return confirm('Supprimer cette programmation ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ seance.id) }}">
+                    <button class="btn-delete-mini" title="Supprimer la séance">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </form>
+            </div>
 
-    <a href="{{ path('app_seance_index') }}">back to list</a>
+            {{ form_start(form) }}
+                <div class="dt-container">
+                    <div class="form-group">
+                        {{ form_label(form.date_part) }}
+                        <div class="input-icon">
+                            {{ form_widget(form.date_part) }}
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.time_part) }}
+                        <div class="input-icon">
+                            {{ form_widget(form.time_part) }}
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
 
-    {{ include('seance/_delete_form.html.twig') }}
+                <div class="form-group" style="margin-bottom: 20px;">
+                    {{ form_label(form.film) }}
+                    {{ form_widget(form.film) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.salle) }}
+                    {{ form_widget(form.salle, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <button type="submit" class="btn-update">
+                    <i class="fa-solid fa-floppy-disk"></i> Mettre à jour la séance
+                </button>
+            {{ form_end(form) }}
+
+            <div style="margin-top: 25px; text-align: center;">
+                <a href="{{ path('app_seance_index') }}" style="color: #666; text-decoration: none; font-size: 0.9rem;">
+                    <i class="fa-solid fa-arrow-left"></i> Retour au planning
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Initialisation des sélecteurs
+            flatpickr(".date-picker", { locale: "fr", dateFormat: "Y-m-d", altInput: true, altFormat: "d F Y" });
+            flatpickr(".time-picker", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, minuteIncrement: 15 });
+
+            // 2. Logique de changement d'affiche en temps réel
+            const filmSelect = document.querySelector('.film-select');
+            const posterImg = document.getElementById('current-poster-img');
+            const assetBaseUrl = "{{ asset('uploads/affiches/') }}";
+
+            filmSelect.addEventListener('change', function() {
+                // On récupère le nom du fichier depuis l'attribut data-poster de l'option sélectionnée
+                const selectedOption = this.options[this.selectedIndex];
+                const posterFilename = selectedOption.getAttribute('data-poster');
+
+                // Petit effet de fondu pour le changement
+                posterImg.style.opacity = '0';
+                
+                setTimeout(() => {
+                    if (posterFilename) {
+                        posterImg.src = assetBaseUrl + posterFilename;
+                    } else {
+                        posterImg.src = assetBaseUrl + "default.jpg"; // Image par défaut si besoin
+                    }
+                    posterImg.style.opacity = '1';
+                }, 300);
+            });
+        });
+    </script>
 {% endblock %}

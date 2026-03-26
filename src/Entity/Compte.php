@@ -58,6 +58,7 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->reservation = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -240,6 +241,12 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $googleId = null;
 
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $reservations;
+
     public function getResetToken(): ?string
     {
         return $this->resetToken;
@@ -261,5 +268,13 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
         $this->googleId = $googleId;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
     }
 }

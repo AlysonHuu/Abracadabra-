@@ -17,8 +17,9 @@ class Seance
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $DateDiffusion = null;
+    // Changé en DATETIME pour supporter les horaires (Gaumont style)
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateDiffusion = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $NbPlaceReservees = null;
@@ -46,9 +47,16 @@ class Seance
     #[ORM\ManyToMany(targetEntity: Compte::class, mappedBy: 'reservation')]
     private Collection $comptes;
 
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'seance', cascade: ['remove'], orphanRemoval: true)]
+    private Collection $reservations;
+
     public function __construct()
     {
         $this->comptes = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -56,14 +64,14 @@ class Seance
         return $this->id;
     }
 
-    public function getDateDiffusion(): ?\DateTime
+    public function getDateDiffusion(): ?\DateTimeInterface
     {
-        return $this->DateDiffusion;
+        return $this->dateDiffusion;
     }
 
-    public function setDateDiffusion(\DateTime $DateDiffusion): static
+    public function setDateDiffusion(\DateTimeInterface $dateDiffusion): static
     {
-        $this->DateDiffusion = $DateDiffusion;
+        $this->dateDiffusion = $dateDiffusion;
 
         return $this;
     }
@@ -177,5 +185,34 @@ class Seance
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setSeance($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            if ($reservation->getSeance() === $this) {
+                $reservation->setSeance(null);
+            }
+        }
+
+        return $this;
     }
 }

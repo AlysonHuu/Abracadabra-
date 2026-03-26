@@ -1,70 +1,152 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Film{% endblock %}
+{% block title %}{{ film.Nom }} - Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        .film-header { display: flex; gap: 40px; margin-bottom: 50px; flex-wrap: wrap; }
+        .film-poster { flex: 1; min-width: 300px; }
+        .film-poster img { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .film-info { flex: 2; min-width: 350px; color: #333; }
+        .film-info h1 { font-size: 3rem; color: #8b0000; margin-bottom: 10px; }
+        .meta-info { margin-bottom: 20px; font-weight: bold; color: #666; }
+        .meta-info span { margin-right: 15px; }
+        
+        /* Section Réservation Gaumont */
+        .booking-section { background: #121212; color: white; padding: 30px; border-radius: 15px; margin-top: 40px; }
+        .date-carousel { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; border-bottom: 1px solid #333; align-items: center; }
+        .calendar-icon { padding: 15px; border: 1px solid #444; border-radius: 8px; font-size: 1.2rem; }
+        
+        .date-item { 
+            min-width: 90px; text-align: center; cursor: pointer; padding: 12px; 
+            border: 2px solid #444; border-radius: 8px; transition: all 0.3s;
+        }
+        .date-item.active { border-color: #8b0000; background: #222; }
+        .date-item:hover { border-color: #8b0000; }
+        .date-item .day { font-size: 0.75rem; text-transform: uppercase; opacity: 0.7; }
+        .date-item .number { font-size: 1.4rem; font-weight: bold; display: block; }
+
+        .times-display { margin-top: 30px; }
+        .time-group { animation: fadeIn 0.5s; }
+        .time-grid { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; }
+        
+        .time-card { 
+            background: #2a2a2a; color: white; text-decoration: none; padding: 18px 30px; 
+            border-radius: 6px; text-align: center; border-bottom: 4px solid transparent; transition: 0.3s;
+        }
+        .time-card:hover { background: #3a3a3a; border-bottom-color: #8b0000; transform: translateY(-3px); }
+        .time-card .hour { font-size: 1.2rem; font-weight: bold; display: block; }
+        .time-card .format { font-size: 0.7rem; opacity: 0.5; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .d-none { display: none; }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Film</h1>
+<div class="container mt-4">
+    <div class="film-header">
+        <div class="film-poster">
+            {# Utilisation du champ 'Affiche' de ta base [cite: 52] #}
+            <img src="{{ asset('uploads/affiches/' ~ film.Affiche) }}" alt="Affiche {{ film.Nom }}">
+        </div>
+        
+        <div class="film-info">
+            <h1>{{ film.Nom }}</h1> 
+            <div class="meta-info">
+                <span><i class="fa-solid fa-clock"></i> {{ film.Duree }} min</span> 
+                <span><i class="fa-solid fa-layer-group"></i> {{ film.Genre }}</span> 
+                <span><i class="fa-solid fa-star" style="color: #f1c40f;"></i> {{ film.Note }}/5</span>
+            </div>
+            
+            <p class="description" style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px;">
+                {{ film.Description }} 
+            </p>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ film.id }}</td>
-            </tr>
-            <tr>
-                <th>Affiche</th>
-                <td>{{ film.Affiche }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ film.Nom }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ film.Description }}</td>
-            </tr>
-            <tr>
-                <th>Genre</th>
-                <td>{{ film.Genre }}</td>
-            </tr>
-            <tr>
-                <th>EstDispo</th>
-                <td>{{ film.estDispo ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>DateSortie</th>
-                <td>{{ film.dateSortie ? film.dateSortie|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Duree</th>
-                <td>{{ film.Duree }}</td>
-            </tr>
-            <tr>
-                <th>Note</th>
-                <td>{{ film.Note }}</td>
-            </tr>
-            <tr>
-                <th>Commentaire</th>
-                <td>{{ film.Commentaire }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ film.createdAt ? film.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ film.updatedAt ? film.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DeletedAt</th>
-                <td>{{ film.deletedAt ? film.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+            <div style="font-size: 0.9rem; color: #888;">
+                Date de sortie : {{ film.dateSortie|date('d/m/Y') }} 
+            </div>
+        </div>
+    </div>
 
-    <a href="{{ path('app_film_index') }}">back to list</a>
+    <div class="booking-section">
+        <h2 style="margin-bottom: 25px;"><i class="fa-solid fa-ticket"></i> Réserver une séance</h2>
+        
+        {% if seancesParJour is not empty %}
+            <div class="date-carousel">
+                <div class="calendar-icon">
+                    <i class="fa-regular fa-calendar-days"></i>
+                </div>
+                
+                {% for date, seances in seancesParJour %}
+                    <div class="date-item {{ loop.first ? 'active' : '' }}" 
+                         onclick="selectDate('{{ date }}')" 
+                         id="btn-{{ date }}">
+                        <span class="day">{{ date|date('D.') }}</span>
+                        <span class="number">{{ date|date('d') }}</span>
+                        <span class="month">{{ date|date('M') }}</span>
+                    </div>
+                {% endfor %}
+            </div>
 
-    <a href="{{ path('app_film_edit', {'id': film.id}) }}">edit</a>
+            <div class="times-display">
+                {% for date, seances in seancesParJour %}
+                    <div class="time-group {{ loop.first ? '' : 'd-none' }}" id="group-{{ date }}">
+                        <h4 style="color: #8b0000; font-size: 1.1rem; margin-bottom: 15px;">Cinéma Abracadabra - Le Renoir ></h4>
+                        <div class="time-grid">
+                            {% for seance in seances %}
+                                <a href="{{ path('app_reservation_new', {'id': seance.id}) }}" class="time-card">
+                                    <span class="hour">{{ seance.dateDiffusion|date('H:i') }}</span>
+                                    <span class="format">VF</span>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align: center; padding: 20px; opacity: 0.6;">
+                Désolé, aucune séance n'est prévue pour ce film prochainement.
+            </p>
+        {% endif %}
+    </div>
 
-    {{ include('film/_delete_form.html.twig') }}
+    {# On n'affiche ces boutons QUE pour les administrateurs #}
+    {% if is_granted('ROLE_ADMIN') %}
+        <div style="margin-top: 40px; display: flex; gap: 20px; border-top: 1px solid #ddd; padding-top: 20px;">
+            <a href="{{ path('app_film_index') }}" class="btn-login" style="background: #666; text-decoration: none; padding: 10px 20px;">
+                <i class="fa-solid fa-list"></i> Gestion des films
+            </a>
+            <a href="{{ path('app_film_edit', {'id': film.id}) }}" class="btn-login" style="background: #333; text-decoration: none; padding: 10px 20px;">
+                <i class="fa-solid fa-pen-to-square"></i> Modifier le film
+            </a>
+            <div style="margin-left: auto;">
+                {{ include('film/_delete_form.html.twig') }}
+            </div>
+        </div>
+    {% endif %}
+
+    {# Bouton de retour simple pour les utilisateurs #}
+    {% if not is_granted('ROLE_ADMIN') %}
+        <div style="margin-top: 20px;">
+            <a href="{{ path('cinema_homepage') }}" style="color: #8b0000; text-decoration: none;">
+                <i class="fa-solid fa-arrow-left"></i> Retour à l'accueil
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function selectDate(date) {
+    // 1. Masquer tous les groupes d'horaires
+    document.querySelectorAll('.time-group').forEach(el => el.classList.add('d-none'));
+    // 2. Afficher le groupe de la date sélectionnée
+    document.getElementById('group-' + date).classList.remove('d-none');
+    
+    // 3. Gérer l'apparence des boutons du carrousel
+    document.querySelectorAll('.date-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('btn-' + date).classList.add('active');
+}
+</script>
 {% endblock %}

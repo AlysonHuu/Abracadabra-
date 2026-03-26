@@ -1,86 +1,221 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Film index{% endblock %}
+{% block title %}Gestion du Catalogue | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .index-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .index-header h1 {
+            color: #8b0000;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .modern-table th {
+            background: #f8f9fa;
+            color: #666;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 2px solid #eee;
+        }
+
+        .modern-table td {
+            padding: 15px 20px;
+            vertical-align: middle;
+            border-bottom: 1px solid #eee;
+            color: #444;
+        }
+
+        .modern-table tr:hover {
+            background-color: #fdfdfd;
+        }
+
+        /* Styles spécifiques aux colonnes */
+        .poster-mini {
+            width: 50px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        .film-name {
+            font-weight: bold;
+            color: #333;
+            display: block;
+        }
+
+        .badge-genre {
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .description-text {
+            font-size: 0.9rem;
+            color: #777;
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Boutons d'action */
+        .actions-cell {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-view { background: #e3f2fd; color: #1976d2; }
+        .btn-edit { background: #fef3c7; color: #d97706; }
+        .btn-delete { background: #fee2e2; color: #dc2626; border: none; cursor: pointer; }
+
+        .btn-icon:hover { transform: translateY(-2px); filter: brightness(0.95); }
+
+        .btn-add {
+            background: #8b0000;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover { background: #a00000; box-shadow: 0 4px 12px rgba(139,0,0,0.3); }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Film index</h1>
+<div class="admin-container">
+    <div class="index-header">
+        <div>
+            <h1>Gestion du Catalogue</h1>
+            <p style="color: #888; margin-top: 5px;">{{ films|length }} films enregistrés dans la base</p>
+        </div>
+        <a href="{{ path('app_film_new') }}" class="btn-add">
+            <i class="fa-solid fa-plus"></i> Ajouter un film
+        </a>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Affiche</th>
-                <th>Nom</th>
-                <th>Description</th>
-                <th>Genre</th>
-                <th>Disponibilité</th>
-                <th>Durée</th>
-                <th>Créé le</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for film in films %}
-            <tr>
-                {# 1. Affichage de l'image #}
-                <td>
-                    {% if film.Affiche %}
-                        <img src="{{ asset('uploads/affiches/' ~ film.Affiche) }}" 
-                            alt="{{ film.Nom }}" 
-                            style="width: 80px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    {% else %}
-                        <span style="color: #ccc; font-style: italic;">Pas d'affiche</span>
-                    {% endif %}
-                </td>
-
-                {# 2. Nom #}
-                <td><strong>{{ film.Nom }}</strong></td>
-
-                {# 3. Description (avec une limite de caractères pour ne pas casser le tableau) #}
-                <td>{{ film.Description|slice(0, 50) }}...</td>
-
-                {# 4. Genre #}
-                <td>{{ film.Genre }}</td>
-
-                {# 5. Pastille de disponibilité #}
-                <td style="text-align: center;">
-                    {% if film.EstDispo %}
-                        <span title="Disponible" style="font-size: 1.2rem; color: green;">🟢</span>
-                    {% else %}
-                        <span title="Indisponible" style="font-size: 1.2rem; color: red;">🔴</span>
-                    {% endif %}
-                </td>
-
-                {# 6. Durée avec "min" #}
-                <td>{{ film.Duree }} min</td>
-
-                {# 7. Date de création formatée #}
-                <td>{{ film.CreatedAt ? film.CreatedAt|date('d/m/Y H:i') : '' }}</td>
-
-                {# Actions #}
-                 
-                 <td class="actions-cell">
-                {# Bouton Voir (Détails) #}
-                <a href="{{ path('app_film_show', {'id': film.id}) }}" class="action-link" title="Détails">👁️</a>
-
-                {# Bouton Modifier (Crayon) #}
-                <a href="{{ path('app_film_edit', {'id': film.id}) }}" class="action-link" title="Modifier">✏️</a>
-
-                {# Bouton Supprimer (Croix) #}
-                <form method="  post" action="{{ path('app_film_delete', {'id': film.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce film ?');" style="display:inline;">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ film.id) }}">
-                    <button class="action-link" style="background: none; border: none; padding: 0; cursor: pointer;" title="Supprimer">
-                        ❌
-                    </button>
-                </form>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">Aucun film trouvé</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_film_new') }}">Create new</a>
+    <div class="table-card">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>Affiche</th>
+                    <th>Nom & Genre</th>
+                    <th>Description</th>
+                    <th>Disponibilité</th>
+                    <th>Durée</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for film in films %}
+                <tr>
+                    <td>
+                        <img src="{{ asset('uploads/affiches/' ~ film.Affiche) }}" class="poster-mini" alt="{{ film.Nom }}">
+                    </td>
+                    <td>
+                        <span class="film-name">{{ film.Nom }}</span>
+                        <span class="badge-genre">{{ film.Genre }}</span>
+                    </td>
+                    <td>
+                        <div class="description-text" title="{{ film.Description }}">{{ film.Description }}</div>
+                    </td>
+                    <td>
+                        <div class="status-pill">
+                            <span class="dot" style="background-color: {{ film.estDispo ? '#2ecc71' : '#e74c3c' }}"></span>
+                            {{ film.estDispo ? 'Disponible' : 'Indisponible' }}
+                        </div>
+                    </td>
+                    <td style="font-weight: 500;">
+                        <i class="fa-regular fa-clock" style="opacity: 0.5;"></i> {{ film.Duree }} min
+                    </td>
+                    <td class="actions-cell">
+                        <a href="{{ path('app_film_show', {'id': film.id}) }}" class="btn-icon btn-view" title="Voir">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a href="{{ path('app_film_edit', {'id': film.id}) }}" class="btn-icon btn-edit" title="Modifier">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <form method="post" action="{{ path('app_film_delete', {'id': film.id}) }}" onsubmit="return confirm('Supprimer définitivement ce film ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ film.id) }}">
+                            <button class="btn-icon btn-delete" title="Supprimer">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
+                        <i class="fa-solid fa-film" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                        Aucun film trouvé dans le catalogue.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

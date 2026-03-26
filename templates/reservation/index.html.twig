@@ -1,0 +1,310 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes réservations | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body { background-color: #ececec; }
+
+    .tickets-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+        gap: 40px;
+        padding: 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* DESIGN DU BILLET STABLE */
+    .ticket-card {
+        background: #f4ecd8;
+        display: flex;
+        height: 220px;
+        position: relative;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        overflow: hidden; /* FIX : Pour ne voir que des demi-cercles */
+        border: 1px solid #d1d1d1;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .ticket-card:hover { transform: translateY(-5px); }
+
+    /* LES ENCOCHES */
+    .ticket-card::before, .ticket-card::after {
+        content: '';
+        position: absolute;
+        width: 42px;
+        height: 42px;
+        background: #ececec; /* Même couleur que le body */
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        border: 1px solid #d1d1d1;
+    }
+    .ticket-card::before { left: -21px; }
+    .ticket-card::after { right: -21px; }
+
+    .ticket-poster {
+        flex: 0 0 160px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .ticket-poster img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .ticket-info {
+        flex: 1;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-left: 2px dashed rgba(0,0,0,0.08);
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    .ticket-film-name {
+        color: #8b0000;
+        font-size: 1.6rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .ticket-details { font-size: 1rem; color: #444; }
+
+    .ticket-qr-section {
+        flex: 0 0 110px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.02);
+        border-left: 2px dashed rgba(0,0,0,0.08);
+    }
+
+    /* MODALE INTERACTIVE */
+    #magic-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(12px);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+    }
+    #magic-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .magic-modal {
+        background: white;
+        width: 90%;
+        max-width: 500px;
+        padding: 40px 30px;
+        border-radius: 30px;
+        position: relative;
+        text-align: center;
+        transform: translateY(30px);
+        transition: transform 0.4s ease;
+    }
+    #magic-overlay.active .magic-modal { transform: translateY(0); }
+
+    .close-magic {
+        position: absolute;
+        top: 20px; right: 25px;
+        background: none; border: none; font-size: 2rem; color: #ccc; cursor: pointer;
+    }
+
+    .large-qr-container {
+        position: relative;
+        display: inline-block;
+        padding: 15px;
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #eee;
+        cursor: pointer;
+        overflow: hidden;
+    }
+    
+    .large-qr-container img { 
+        width: 260px; height: 260px; 
+        display: block;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Animation de scan rouge */
+    .scan-line {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 4px;
+        background: #ff0000;
+        box-shadow: 0 0 15px #ff0000;
+        z-index: 10;
+        animation: scanAnim 3s infinite ease-in-out;
+    }
+    
+    @keyframes scanAnim { 
+        0% { top: 0%; } 
+        50% { top: 100%; }
+        100% { top: 0%; }
+    }
+
+    .magic-progress-bar { width: 100%; height: 12px; background: #eee; border-radius: 10px; overflow: hidden; margin: 20px 0; }
+    .magic-progress-fill { width: 0%; height: 100%; background: #8b0000; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 style="color: #8b0000; text-align: center; margin-top: 50px; font-weight: 800; font-size: 2.8rem;">
+        <i class="fa-solid fa-receipt"></i> Mes réservations
+    </h1>
+
+    <div class="tickets-container">
+        {% for res in reservations %}
+            {# On s'assure que onclick appelle bien openTicket #}
+            <div class="ticket-card" onclick="openTicket('{{ res.ticketToken }}', '{{ res.seance.film.nom|escape('js') }}')">
+                 <div class="ticket-inner" style="display: flex; width: 100%;">
+                    <div class="ticket-poster">
+                        <img src="{{ asset('uploads/affiches/' ~ res.seance.film.affiche) }}" alt="Affiche">
+                    </div>
+                    
+                    <div class="ticket-info">
+                        <div class="ticket-film-name">{{ res.seance.film.nom }}</div>
+                        <div class="ticket-details">
+                            <div><i class="fa-solid fa-calendar"></i> {{ res.seance.dateDiffusion|date('d/m/Y') }}</div>
+                            <div><i class="fa-solid fa-clock"></i> {{ res.seance.dateDiffusion|date('H:i') }}</div>
+                            <div style="margin-top: 10px; font-weight: bold; color: #8b0000; text-decoration: underline;">
+                                {{ res.nbPlaces }} PLACE(S) RÉSERVÉE(S)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-qr-section">
+                        <div style="text-align: center; color: #aaa; font-size: 0.7rem;">
+                            <i class="fa-solid fa-qrcode" style="font-size: 2.2rem; display: block; margin-bottom: 5px;"></i>
+                            SCAN
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="magic-overlay">
+    <div class="magic-modal">
+        <button class="close-magic" onclick="closeMagic()">&times;</button>
+        
+        <div id="step-qr">
+            <h2 style="color: #8b0000; margin-bottom: 10px;">Votre Billet Numérique</h2>
+            <p style="color: #666; margin-bottom: 25px;">Cliquez sur le QR Code pour valider votre entrée</p>
+            <div class="large-qr-container" onclick="startMagicScan()">
+                <div class="scan-line"></div>
+                {# On affiche le QR code dès le début #}
+                <img id="large-qr-img" src="" alt="QR Code">
+            </div>
+        </div>
+
+        <div id="step-animation" style="display: none;">
+             <i class="fa-solid fa-wand-magic-sparkles fa-4x" style="color: #8b0000; margin-bottom: 20px;"></i>
+             <h2 id="magic-title">Analyse du profil Jury...</h2>
+             <div class="loader-container">
+                <div class="magic-progress-bar"><div id="magic-fill" class="magic-progress-fill"></div></div>
+                <p id="magic-status" style="font-weight: bold; color: #555;">Initialisation du protocole...</p>
+             </div>
+             {# QR Code reste visible en filigrane pendant le scan #}
+             <div style="opacity: 0.1; transform: scale(0.6); margin-top: -60px;">
+                <img id="qr-mini-bg" src="" style="width: 250px;">
+             </div>
+        </div>
+
+        <div id="step-final" style="display: none;">
+            <i class="fa-solid fa-circle-check fa-5x" style="color: #2ecc71; margin-bottom: 20px;"></i>
+            <h2 style="color: #333; margin-bottom: 15px;">ACCÈS VIP CONFIRMÉ</h2>
+            <p id="final-text" style="font-size: 1.2rem; color: #444; line-height: 1.6;"></p>
+            <button class="btn-login" onclick="closeMagic()" style="margin-top: 30px; padding: 12px 30px; background: #8b0000; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentFilm = "";
+let currentUserName = "{{ app.user.prenom }}";
+
+function openTicket(token, filmName) {
+    currentFilm = filmName;
+    const qrImg = document.getElementById('large-qr-img');
+    const miniBg = document.getElementById('qr-mini-bg');
+    
+    // On appelle notre nouveau contrôleur corrigé
+    const qrUrl = "/qrcode/" + token;
+    qrImg.src = qrUrl;
+    miniBg.src = qrUrl;
+    
+    document.getElementById('step-qr').style.display = 'block';
+    document.getElementById('step-animation').style.display = 'none';
+    document.getElementById('step-final').style.display = 'none';
+    
+    document.getElementById('magic-overlay').classList.add('active');
+}
+
+function startMagicScan() {
+    document.getElementById('step-qr').style.display = 'none';
+    document.getElementById('step-animation').style.display = 'block';
+    
+    const fill = document.getElementById('magic-fill');
+    const status = document.getElementById('magic-status');
+    const steps = [
+        "Détection de présence VIP confirmée...",
+        "Calcul de la bienveillance du jury (Score élevé)...",
+        "Soudoyage de l'algorithme au pop-corn fini...",
+        "Transformation des sièges en pixels magiques...",
+        "Ouverture des portes virtuelles !"
+    ];
+
+    let stepIndex = 0;
+    fill.style.width = "0%";
+    
+    // On lance la transition de la barre (10 secondes total)
+    setTimeout(() => {
+        fill.style.transition = "width 10s linear";
+        fill.style.width = "100%";
+    }, 50);
+
+    const interval = setInterval(() => {
+        if (stepIndex < steps.length) {
+            status.innerText = steps[stepIndex];
+            stepIndex++;
+        } else {
+            clearInterval(interval);
+            showFinalSuccess();
+        }
+    }, 2000); // Ralenti à 2 secondes par message pour le jury
+}
+
+function showFinalSuccess() {
+    document.getElementById('step-animation').style.display = 'none';
+    document.getElementById('step-final').style.display = 'block';
+    
+    document.getElementById('final-text').innerHTML =
+        `<strong>Abracadabra !</strong> Vos places pour <em>${currentFilm}</em> se sont transformées en pixels magiques.<br><br>` +
+        `Le protocole <strong>"Note Maximale"</strong> est désormais actif pour ${currentUserName}.`;
+}
+
+function closeMagic() {
+    document.getElementById('magic-overlay').classList.remove('active');
+}
+</script>
+{% endblock %}

@@ -30,6 +30,7 @@ final class FilmController extends AbstractController
     }
 
     #[Route('/new', name: 'app_film_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $film = new Film();
@@ -72,12 +73,26 @@ final class FilmController extends AbstractController
     #[Route('/{id}', name: 'app_film_show', methods: ['GET'])]
     public function show(Film $film): Response
     {
+        $seances = $film->getSeances();
+        $seancesParJour = [];
+
+        foreach ($seances as $seance) {
+            // On crée une clé par jour (ex: "2026-03-26")
+            $dateKey = $seance->getDateDiffusion()->format('Y-m-d');
+            $seancesParJour[$dateKey][] = $seance;
+        }
+
+        // On trie les jours pour qu'ils soient dans l'ordre chronologique
+        ksort($seancesParJour);
+
         return $this->render('film/show.html.twig', [
             'film' => $film,
+            'seancesParJour' => $seancesParJour,
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_film_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Film $film, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         // 1. On stocke le nom de l'affiche actuelle au cas où on ne la change pas
@@ -130,17 +145,18 @@ final class FilmController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_film_delete', methods: ['POST'])]
-public function delete(Request $request, Film $film, EntityManagerInterface $entityManager): Response
-{
-    if ($this->isCsrfTokenValid('delete'.$film->getId(), $request->getPayload()->getString('_token'))) {
-        
-        $film->setDeletedAt(new \DateTimeImmutable());
-        
-        $film->setEstDispo(false); 
+    #[IsGranted('ROLE_ADMIN')]
+    public function delete(Request $request, Film $film, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$film->getId(), $request->getPayload()->getString('_token'))) {
+            
+            $film->setDeletedAt(new \DateTimeImmutable());
+            
+            $film->setEstDispo(false); 
 
-        $entityManager->flush();
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_film_index', [], Response::HTTP_SEE_OTHER);
     }
-
-    return $this->redirectToRoute('app_film_index', [], Response::HTTP_SEE_OTHER);
-}
 }

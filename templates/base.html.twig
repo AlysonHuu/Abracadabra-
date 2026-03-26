@@ -30,11 +30,16 @@
           <li class="nav-item"><a class="nav-link" href="{{ path('cinema_homepage') }}">Accueil</a></li>
           
           {# Menu réservé UNIQUEMENT aux administrateurs #}
-          {% if is_granted('ROLE_ADMIN') %}
-            <li class="nav-item"><a class="nav-link" href="{{ path('app_film_index') }}">FILMS</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ path('app_salle_index') }}">SALLES</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ path('app_seance_index') }}">SÉANCES</a></li>
-          {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_film_index') }}">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_salle_index') }}">SALLES</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_seance_index') }}">SÉANCES</a></li>
+            {% endif %}
+            {% if is_granted('ROLE_USER') and not is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_reservation_index') }}" class="nav-link">
+                    <i class="fa-solid fa-ticket"></i> Mes Réservations
+                </a>
+            {% endif %}
         </ul>
 
         {# BARRE DE RECHERCHE #}

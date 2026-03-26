@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route; // Import identique à SecurityController
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class UserController extends AbstractController
 {
@@ -49,27 +50,25 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/mon-compte/supprimer', name: 'app_mon_compte_delete', methods: ['POST'])]
+    #[Route('/mon-compte/supprimer', name: 'app_delete_account', methods: ['POST'])]
     public function deleteAccount(
-        Request $request, 
-        EntityManagerInterface $entityManager,
-        TokenStorageInterface $tokenStorage
+        EntityManagerInterface $entityManager, 
+        TokenStorageInterface $tokenStorage, 
+        Request $request
     ): Response {
+        /** @var Compte $user */
         $user = $this->getUser();
-        
-        if ($this->isCsrfTokenValid('delete_account', $request->request->get('_token'))) {
-            // Soft Delete : on met à jour la date de suppression
-            $user->setDeletedAt(new \DateTimeImmutable());
-            $entityManager->flush();
 
-            // Déconnexion manuelle
-            $tokenStorage->setToken(null);
-            $request->getSession()->invalidate();
+        // 1. On "déconnecte" l'utilisateur manuellement pour éviter les erreurs de session
+        $tokenStorage->setToken(null);
+        $request->getSession()->invalidate();
 
-            $this->addFlash('info', 'Votre compte a bien été supprimé.');
-            return $this->redirectToRoute('cinema_homepage');
-        }
+        // 2. On supprime le compte de la base de données
+        $entityManager->remove($user);
+        $entityManager->flush();
 
-        return $this->redirectToRoute('app_mon_compte');
+        $this->addFlash('success', 'Votre compte a été supprimé avec succès. Au plaisir de vous revoir !');
+
+        return $this->redirectToRoute('app_accueil'); // Redirection vers l'accueil
     }
 }

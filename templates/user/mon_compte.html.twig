@@ -5,76 +5,215 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     <style>
-        .reservations-scroll {
+        .account-wrapper {
             display: flex;
-            overflow-x: auto;
-            gap: 20px;
-            padding: 10px 0;
-            scrollbar-width: thin;
+            min-height: calc(100vh - 180px);
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            max-width: 1300px;
+            margin: 30px auto;
         }
-        .reservation-card {
-            flex: 0 0 150px;
-            text-align: center;
-        }
-        .reservation-card img {
-            width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .btn-danger-custom {
-            background-color: #dc3545;
+
+        /* SECTION RÉSERVATIONS (GAUCHE) */
+        .reservations-side {
+            flex: 1.4;
+            background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%);
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            cursor: pointer;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
         }
+
+        .reservations-side h2 { font-size: 2.8rem; margin-bottom: 10px; font-weight: 800; }
+        .reservations-side p.subtitle { opacity: 0.8; margin-bottom: 40px; }
+
+        .carousel-container {
+            display: flex;
+            gap: 25px;
+            overflow-x: auto;
+            padding: 20px 5px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+        .carousel-container::-webkit-scrollbar { display: none; }
+
+        .reservation-card {
+            flex: 0 0 220px;
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            scroll-snap-align: start;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .reservation-card:hover { transform: scale(1.05); }
+
+        .card-poster { width: 100%; height: 280px; object-fit: cover; }
+        .card-body { padding: 15px; }
+        .card-body h3 { font-size: 1.1rem; margin-bottom: 8px; color: #8b0000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info { font-size: 0.85rem; color: #666; margin-bottom: 4px; }
+        
+        .qr-placeholder {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f8f8;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #aaa;
+        }
+
+        /* SECTION INFORMATIONS (DROITE) */
+        .info-side {
+            flex: 1;
+            padding: 50px;
+            background: #fff;
+            overflow-y: auto;
+        }
+
+        .info-side h2 { color: #333; margin-bottom: 35px; position: relative; }
+        .info-side h2::after { content: ''; position: absolute; left: 0; bottom: -10px; width: 50px; height: 4px; background: #8b0000; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus { border-color: #8b0000; outline: none; }
+
+        .btn-update {
+            background: #8b0000; color: white; border: none; padding: 15px;
+            width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139,0,0,0.2);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.3s;
+        }
+        .btn-update:hover { background: #a00000; transform: translateY(-2px); }
+        
+        .flash-toast {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            background: #27ae60; color: white; padding: 15px 30px;
+            border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: slideIn 0.5s forwards, fadeOut 0.5s 3s forwards;
+        }
+
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="split-container">
-    <div class="left-side">
-        <h2>Mes Réservations</h2>
-        
-        {% if user.reservation is empty %}
-            <p>Vous n'avez pas de réservation pour le moment.</p>
-        {% else %}
-            <div class="reservations-scroll">
-                {% for seance in user.reservation %}
-                    <div class="reservation-card">
-                        <img src="{{ asset('uploads/images/' ~ seance.film.affiche) }}" alt="{{ seance.film.titre }}">
-                        <p style="font-size: 0.8rem; margin-top: 5px;">{{ seance.film.titre }}<br>
-                        <strong>{{ seance.dateProjection|date('d/m H:i') }}</strong></p>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    </div>
+    {% for message in app.flashes('success') %}
+        <div class="flash-toast">
+            <i class="fa-solid fa-circle-check"></i> {{ message }}
+        </div>
+    {% endfor %}
 
-    <div class="right-side">
-        <div class="login-box">
-            <h1>Mon Profil</h1>
-
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">{{ message }}</div>
+    <div class="account-wrapper">
+        <div class="reservations-side">
+            <h2>Mes Réservations</h2>
+            
+            {% set active_reservations = [] %}
+            {% for reservation in app.user.reservations %}
+                {% if reservation.seance.dateDiffusion >= date() %}
+                    {% set active_reservations = active_reservations|merge([reservation]) %}
+                {% endif %}
             {% endfor %}
 
-            {{ form_start(form) }}
-                <div class="form-group">{{ form_row(form.email) }}</div>
-                <div class="form-group">{{ form_row(form.nom) }}</div>
-                <div class="form-group">{{ form_row(form.prenom) }}</div>
-                <hr>
-                <div class="form-group">{{ form_row(form.plainPassword) }}</div>
-                <button type="submit" class="btn-login">Mettre à jour</button>
-            {{ form_end(form) }}
+            {% if active_reservations|length > 0 %}
+                <p class="subtitle">Préparez le pop-corn ! Voici vos prochaines séances :</p>
+                <div class="carousel-container">
+                    {% set seances_affichees = [] %}
+                    {% for res in active_reservations %}
+                        {% if res.seance.id not in seances_affichees %}
+                            <div class="reservation-card">
+                                <a href="{{ path('app_reservation_index') }}" class="reservation-card" style="text-decoration: none; display: block;">
+                                    <img src="{{ asset('uploads/affiches/' ~ res.seance.film.affiche) }}" class="card-poster" alt="Affiche">
+                                    <div class="card-body">
+                                        <h3>{{ res.seance.film.nom }}</h3>
+                                        <div class="card-info"><i class="fa-solid fa-calendar-day"></i> {{ res.seance.dateDiffusion|date('d/m/Y') }}</div>
+                                        <div class="card-info"><i class="fa-solid fa-clock"></i> {{ res.seance.dateDiffusion|date('H:i') }}</div>
+                                        
+                                        <div class="qr-placeholder">
+                                            <i class="fa-solid fa-qrcode"></i><br>QR Code bientôt disponible
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% set seances_affichees = seances_affichees|merge([res.seance.id]) %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="margin-top: 50px; text-align: center; opacity: 0.6;">
+                    <i class="fa-solid fa-ticket" style="font-size: 4rem; margin-bottom: 20px; display: block;"></i>
+                    <p>Vous n'avez pas de réservation pour le moment.</p>
+                </div>
+            {% endif %}
+            
+            <div style="margin-top: auto;">
+                <a href="{{ path('app_film_index') }}" style="color: white; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-plus-circle"></i> Explorer les films
+                </a>
+            </div>
+        </div>
 
-            <form method="post" action="{{ path('app_mon_compte_delete') }}" onsubmit="return confirm('Êtes-vous vraiment sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
-                <button class="btn-danger-custom">Supprimer mon compte</button>
-            </form>
+        <div class="info-side">
+            <h2>Mes Informations</h2>
+            
+            {{ form_start(form) }}
+                <div class="form-group">
+                    <label>Votre Email</label>
+                    {# Input manuel pour l'affichage uniquement  #}
+                    <input type="text" class="form-control" value="{{ app.user.email }}" disabled style="background: #f8f8f8; cursor: not-allowed; color: #888;">
+                </div>
+                
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        {{ form_label(form.nom) }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        {{ form_label(form.prenom) }}
+                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                <div style="margin: 30px 0; padding: 25px; border-radius: 12px; background: #fffcf0; border: 1px solid #ffeeba;">
+                    <p style="font-size: 0.85rem; color: #856404; margin-bottom: 15px; font-weight: bold;">
+                        <i class="fa-solid fa-lock"></i> Sécurité du compte
+                    </p>
+                    <div class="form-group">
+                        {{ form_label(form.plainPassword.first, 'Nouveau mot de passe') }}
+                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Laisser vide pour ne pas changer'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.plainPassword.second, 'Confirmer le mot de passe') }}
+                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-update">
+                    <i class="fa-solid fa-rotate"></i> Mettre à jour mon profil
+                </button>
+                
+            {# CRUCIAL : On désactive le rendu automatique des champs restants pour éviter le doublon de l'email  #}
+            {{ form_end(form, {'render_rest': false}) }}
+
+            <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                 <form method="post" action="{{ path('app_delete_account') }}" onsubmit="return confirm('La suppression de votre compte est définitive. Continuer ?');">
+                    <button style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; opacity: 0.7; transition: 0.3s;">
+                        <i class="fa-solid fa-trash-can"></i> Supprimer définitivement mon compte
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
