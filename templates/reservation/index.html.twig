@@ -9,156 +9,79 @@
     .tickets-container {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-        gap: 40px;
-        padding: 40px;
-        max-width: 1400px;
-        margin: 0 auto;
+        gap: 40px; padding: 40px; max-width: 1400px; margin: 0 auto;
     }
 
-    /* DESIGN DU BILLET STABLE */
+    /* --- STYLE DES TICKETS --- */
     .ticket-card {
-        background: #f4ecd8;
-        display: flex;
-        height: 220px;
-        position: relative;
-        border-radius: 15px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        overflow: hidden; /* FIX : Pour ne voir que des demi-cercles */
-        border: 1px solid #d1d1d1;
-        cursor: pointer;
-        transition: transform 0.3s ease;
+        background: #f4ecd8; display: flex; height: 220px;
+        position: relative; border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden; border: 1px solid rgba(0,0,0,0.1);
+        cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform-style: preserve-3d;
     }
 
-    .ticket-card:hover { transform: translateY(-5px); }
-
-    /* LES ENCOCHES */
-    .ticket-card::before, .ticket-card::after {
-        content: '';
-        position: absolute;
-        width: 42px;
-        height: 42px;
-        background: #ececec; /* Même couleur que le body */
-        border-radius: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 2;
-        border: 1px solid #d1d1d1;
-    }
-    .ticket-card::before { left: -21px; }
-    .ticket-card::after { right: -21px; }
-
-    .ticket-poster {
-        flex: 0 0 160px;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .ticket-poster img {
-        width: 100%; height: 100%;
-        object-fit: cover;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    .ticket-card::before {
+        content: ""; position: absolute; top: 0; left: -150%;
+        width: 60%; height: 100%;
+        background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent);
+        transform: skewX(-25deg); z-index: 5; pointer-events: none;
     }
 
-    .ticket-info {
-        flex: 1;
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        border-left: 2px dashed rgba(0,0,0,0.08);
-        font-family: 'Courier New', Courier, monospace;
+    .ticket-card:hover::before { animation: shineSweep 6s infinite; }
+
+    @keyframes shineSweep {
+        0% { left: -150%; }
+        15% { left: 150%; }
+        100% { left: 150%; }
     }
 
-    .ticket-film-name {
-        color: #8b0000;
-        font-size: 1.6rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        margin-bottom: 12px;
-    }
+    .aura-JOIE:hover { border-color: #ffd700; box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3); }
+    .aura-PEUR:hover { border-color: #8b0000; box-shadow: 0 10px 30px rgba(139, 0, 0, 0.3); }
+    .aura-TRISTESSE:hover { border-color: #4682b4; box-shadow: 0 10px 30px rgba(70, 130, 180, 0.3); }
+    .aura-NOSTALGIE:hover { border-color: #cd853f; box-shadow: 0 10px 30px rgba(205, 133, 63, 0.3); }
+    .aura-MYSTERE:hover { border-color: #4b0082; box-shadow: 0 10px 30px rgba(75, 0, 130, 0.3); }
 
-    .ticket-details { font-size: 1rem; color: #444; }
+    .ticket-poster { flex: 0 0 160px; padding: 20px; }
+    .ticket-poster img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+    .ticket-info { flex: 1; padding: 25px; border-left: 2px dashed rgba(0,0,0,0.08); font-family: 'Courier New', monospace; }
+    .ticket-film-name { color: #8b0000; font-size: 1.4rem; font-weight: 900; }
+    .ticket-qr-section { flex: 0 0 110px; display: flex; align-items: center; justify-content: center; border-left: 2px dashed rgba(0,0,0,0.08); }
 
-    .ticket-qr-section {
-        flex: 0 0 110px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0,0,0,0.02);
-        border-left: 2px dashed rgba(0,0,0,0.08);
-    }
-
-    /* MODALE INTERACTIVE */
+    /* --- STYLE DE LA MODALE MAGIQUE (CORRECTION) --- */
     #magic-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.85);
-        backdrop-filter: blur(12px);
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.4s ease;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+        z-index: 9999; display: flex; align-items: center; justify-content: center;
+        opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
     }
     #magic-overlay.active { opacity: 1; pointer-events: auto; }
 
     .magic-modal {
-        background: white;
-        width: 90%;
-        max-width: 500px;
-        padding: 40px 30px;
-        border-radius: 30px;
-        position: relative;
-        text-align: center;
-        transform: translateY(30px);
-        transition: transform 0.4s ease;
+        background: white; width: 90%; max-width: 500px; padding: 40px;
+        border-radius: 30px; text-align: center; position: relative;
     }
-    #magic-overlay.active .magic-modal { transform: translateY(0); }
 
     .close-magic {
-        position: absolute;
-        top: 20px; right: 25px;
+        position: absolute; top: 20px; right: 25px;
         background: none; border: none; font-size: 2rem; color: #ccc; cursor: pointer;
     }
 
     .large-qr-container {
-        position: relative;
-        display: inline-block;
-        padding: 15px;
-        background: #fff;
-        border-radius: 20px;
-        border: 1px solid #eee;
-        cursor: pointer;
-        overflow: hidden;
+        position: relative; display: inline-block; padding: 15px;
+        background: #fff; border-radius: 20px; border: 1px solid #eee; cursor: pointer; overflow: hidden;
     }
     
-    .large-qr-container img { 
-        width: 260px; height: 260px; 
-        display: block;
-        position: relative;
-        z-index: 1;
-    }
+    .large-qr-container img { width: 260px; height: 260px; display: block; position: relative; z-index: 1; }
 
-    /* Animation de scan rouge */
     .scan-line {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 4px;
-        background: #ff0000;
-        box-shadow: 0 0 15px #ff0000;
-        z-index: 10;
+        position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+        background: #ff0000; box-shadow: 0 0 15px #ff0000; z-index: 10;
         animation: scanAnim 3s infinite ease-in-out;
     }
     
-    @keyframes scanAnim { 
-        0% { top: 0%; } 
-        50% { top: 100%; }
-        100% { top: 0%; }
-    }
+    @keyframes scanAnim { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
 
     .magic-progress-bar { width: 100%; height: 12px; background: #eee; border-radius: 10px; overflow: hidden; margin: 20px 0; }
     .magic-progress-fill { width: 0%; height: 100%; background: #8b0000; }
@@ -173,29 +96,29 @@
 
     <div class="tickets-container">
         {% for res in reservations %}
-            {# On s'assure que onclick appelle bien openTicket #}
-            <div class="ticket-card" onclick="openTicket('{{ res.ticketToken }}', '{{ res.seance.film.nom|escape('js') }}')">
-                 <div class="ticket-inner" style="display: flex; width: 100%;">
-                    <div class="ticket-poster">
-                        <img src="{{ asset('uploads/affiches/' ~ res.seance.film.affiche) }}" alt="Affiche">
-                    </div>
-                    
-                    <div class="ticket-info">
-                        <div class="ticket-film-name">{{ res.seance.film.nom }}</div>
-                        <div class="ticket-details">
-                            <div><i class="fa-solid fa-calendar"></i> {{ res.seance.dateDiffusion|date('d/m/Y') }}</div>
-                            <div><i class="fa-solid fa-clock"></i> {{ res.seance.dateDiffusion|date('H:i') }}</div>
-                            <div style="margin-top: 10px; font-weight: bold; color: #8b0000; text-decoration: underline;">
-                                {{ res.nbPlaces }} PLACE(S) RÉSERVÉE(S)
-                            </div>
+            {# On utilise res.data pour les données et res.aura pour la classe [cite: 1] #}
+            <div class="ticket-card aura-{{ res.aura|default('MYSTERE') }} shine-anim" 
+                onclick="openTicket('{{ res.data.ticketToken }}', '{{ res.data.seance.film.nom|escape('js') }}')">
+                
+                <div class="ticket-poster">
+                    <img src="{{ asset('uploads/affiches/' ~ res.data.seance.film.affiche) }}" alt="Affiche">
+                </div>
+                
+                <div class="ticket-info">
+                    <div class="ticket-film-name">{{ res.data.seance.film.nom }}</div>
+                    <div class="ticket-details">
+                        <div><i class="fa-solid fa-calendar"></i> {{ res.data.seance.dateDiffusion|date('d/m/Y') }}</div>
+                        <div><i class="fa-solid fa-clock"></i> {{ res.data.seance.dateDiffusion|date('H:i') }}</div>
+                        <div style="margin-top: 10px; font-weight: bold; color: #8b0000; text-decoration: underline;">
+                            {{ res.data.nbPlaces }} PLACE(S) RÉSERVÉE(S)
                         </div>
                     </div>
+                </div>
 
-                    <div class="ticket-qr-section">
-                        <div style="text-align: center; color: #aaa; font-size: 0.7rem;">
-                            <i class="fa-solid fa-qrcode" style="font-size: 2.2rem; display: block; margin-bottom: 5px;"></i>
-                            SCAN
-                        </div>
+                <div class="ticket-qr-section">
+                    <div style="text-align: center; color: #aaa; font-size: 0.7rem;">
+                        <i class="fa-solid fa-qrcode" style="font-size: 2.2rem; display: block; margin-bottom: 5px;"></i>
+                        SCAN
                     </div>
                 </div>
             </div>
@@ -243,20 +166,56 @@
 let currentFilm = "";
 let currentUserName = "{{ app.user.prenom }}";
 
+/**
+ * EFFET 3D "HAPPÉ" PAR LA SOURIS
+ * Gère l'inclinaison et le léger déplacement du ticket vers le curseur
+ */
+document.querySelectorAll('.ticket-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        
+        // Calcul de la position de la souris à l'intérieur du ticket
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // Inclinaison calculée (diviseur 12 pour plus de subtilité)
+        const rotateX = (y - centerY) / 12;
+        const rotateY = (centerX - x) / 12;
+        
+        // Effet d'attraction (déplacement vers la souris)
+        const moveX = (x - centerX) / 15;
+        const moveY = (y - centerY) / 15;
+
+        // Application de la transformation 3D
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate3d(${moveX}px, ${moveY}px, 20px) scale(1.02)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+        // Remet le ticket parfaitement à plat quand la souris sort
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0) scale(1)`;
+    });
+});
+
+/**
+ * GESTION DE LA MODALE ET DU BILLET
+ */
 function openTicket(token, filmName) {
     currentFilm = filmName;
-    const qrImg = document.getElementById('large-qr-img');
-    const miniBg = document.getElementById('qr-mini-bg');
     
-    // On appelle notre nouveau contrôleur corrigé
+    // Chargement dynamique du QR Code
     const qrUrl = "/qrcode/" + token;
-    qrImg.src = qrUrl;
-    miniBg.src = qrUrl;
+    document.getElementById('large-qr-img').src = qrUrl;
+    document.getElementById('qr-mini-bg').src = qrUrl;
     
+    // Réinitialisation des étapes de la modale
     document.getElementById('step-qr').style.display = 'block';
     document.getElementById('step-animation').style.display = 'none';
     document.getElementById('step-final').style.display = 'none';
     
+    // Ouverture de l'overlay
     document.getElementById('magic-overlay').classList.add('active');
 }
 
@@ -266,23 +225,17 @@ function startMagicScan() {
     
     const fill = document.getElementById('magic-fill');
     const status = document.getElementById('magic-status');
-    const steps = [
-        "Détection de présence VIP confirmée...",
-        "Calcul de la bienveillance du jury (Score élevé)...",
-        "Soudoyage de l'algorithme au pop-corn fini...",
-        "Transformation des sièges en pixels magiques...",
-        "Ouverture des portes virtuelles !"
-    ];
-
+    const steps = ["Analyse VIP...", "Calcul jury...", "Pop-corn localisé...", "Magie en cours...", "Accès autorisé !"];
     let stepIndex = 0;
+
+    // Lancement de la barre de progression (6 secondes)
     fill.style.width = "0%";
-    
-    // On lance la transition de la barre (10 secondes total)
     setTimeout(() => {
-        fill.style.transition = "width 10s linear";
+        fill.style.transition = "width 6s linear";
         fill.style.width = "100%";
     }, 50);
 
+    // Changement des messages d'état
     const interval = setInterval(() => {
         if (stepIndex < steps.length) {
             status.innerText = steps[stepIndex];
@@ -291,16 +244,13 @@ function startMagicScan() {
             clearInterval(interval);
             showFinalSuccess();
         }
-    }, 2000); // Ralenti à 2 secondes par message pour le jury
+    }, 1200);
 }
 
 function showFinalSuccess() {
     document.getElementById('step-animation').style.display = 'none';
     document.getElementById('step-final').style.display = 'block';
-    
-    document.getElementById('final-text').innerHTML =
-        `<strong>Abracadabra !</strong> Vos places pour <em>${currentFilm}</em> se sont transformées en pixels magiques.<br><br>` +
-        `Le protocole <strong>"Note Maximale"</strong> est désormais actif pour ${currentUserName}.`;
+    document.getElementById('final-text').innerHTML = `<strong>Abracadabra !</strong> Vos places pour <em>${currentFilm}</em> sont prêtes pour ${currentUserName}.`;
 }
 
 function closeMagic() {

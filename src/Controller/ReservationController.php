@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\ReservationRepository;
+use App\Service\MagicAiService;
 
 class ReservationController extends AbstractController
 {
@@ -72,7 +73,6 @@ class ReservationController extends AbstractController
         $reservation->setNbPlaces($nb);
         $reservation->setPrixTotal($nb * $prixUnitaire);
 
-        // --- LA CORRECTION EST ICI ---
         // Génération d'un jeton unique pour le QR Code (32 caractères aléatoires)
         $token = bin2hex(random_bytes(16));
         $reservation->setTicketToken($token);
@@ -90,11 +90,24 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/mes-reservations', name: 'app_reservation_index')]
-    public function index(ReservationRepository $repository): Response
+    public function index(ReservationRepository $repository, MagicAiService $aiService): Response
     {
-        // On récupère les réservations de l'utilisateur connecté
+        $reservations = $repository->findBy(['user' => $this->getUser()]);
+        $reservationsWithAura = [];
+
+        foreach ($reservations as $res) {
+            // On utilise le nom du film pour l'analyse de l'aura 
+            $nomFilm = $res->getSeance()->getFilm()->getNom();
+            $aura = $aiService->analyzeAura($nomFilm);
+            
+            $reservationsWithAura[] = [
+                'data' => $res,
+                'aura' => $aura
+            ];
+        }
+
         return $this->render('reservation/index.html.twig', [
-            'reservations' => $repository->findBy(['user' => $this->getUser()])
+            'reservations' => $reservationsWithAura
         ]);
     }
 
