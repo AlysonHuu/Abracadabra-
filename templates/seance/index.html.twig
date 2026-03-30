@@ -1,44 +1,165 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Seance index{% endblock %}
+{% block title %}Planning des Séances | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        /* Conteneur principal avec min-height pour bloquer le footer en bas */
+        .admin-page-wrapper {
+            min-height: calc(100vh - 200px); /* Ajuste selon la taille de ton header/footer */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-container { 
+            max-width: 1200px; 
+            margin: 40px auto; 
+            padding: 0 20px;
+            flex-grow: 1; /* Pousse le contenu pour que le footer reste en bas */
+        }
+
+        .index-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px; 
+        }
+
+        .table-card { 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            overflow: hidden; 
+        }
+
+        .modern-table { width: 100%; border-collapse: collapse; }
+        .modern-table th { 
+            background: #f8f9fa; 
+            color: #666; 
+            text-transform: uppercase; 
+            font-size: 0.75rem; 
+            padding: 15px 20px; 
+        }
+
+        /* Alignements spécifiques demandés */
+        .text-left { text-align: left; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+
+        .modern-table td { padding: 15px 20px; border-bottom: 1px solid #eee; vertical-align: middle; }
+
+        .film-mini-info { display: flex; align-items: center; gap: 12px; }
+        .film-mini-info img { width: 35px; height: 50px; object-fit: cover; border-radius: 4px; }
+        
+        .date-badge { display: flex; flex-direction: column; line-height: 1.2; }
+        .date-badge .time { color: #8b0000; font-weight: bold; font-size: 1.1rem; }
+        
+        /* Bouton d'ajout aligné et dimensionné */
+        .btn-add {
+            background: #8b0000;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        /* Alignement des actions à droite */
+        .actions-cell { 
+            display: flex; 
+            gap: 8px; 
+            justify-content: flex-end; 
+        }
+
+        .btn-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; transition: 0.2s; }
+        .btn-view { background: #e3f2fd; color: #1976d2; }
+        .btn-edit { background: #fef3c7; color: #d97706; }
+        .btn-delete { background: #fee2e2; color: #dc2626; border: none; cursor: pointer; padding: 0; }
+        
+        .occupancy-wrapper { width: 100px; background: #eee; height: 6px; border-radius: 3px; margin-top: 5px; overflow: hidden; }
+        .occupancy-bar { height: 100%; background: #8b0000; }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Seance index</h1>
+<div class="admin-page-wrapper">
+    <div class="admin-container">
+        <div class="index-header">
+            <h1 style="color: #8b0000; font-size: 2rem; margin: 0;">Planning des Séances</h1>
+            <a href="{{ path('app_seance_new') }}" class="btn-add">
+                <i class="fa-solid fa-calendar-plus"></i> Programmer une séance
+            </a>
+        </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Film</th>
-                <th>Salle</th>
-                <th>Date et Heure</th>
-                <th>Places restantes</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for seance in seances %}
-            <tr>
-                {# Grâce au __toString, Twig affiche le Nom du film automatiquement #}
-                <td><strong>{{ seance.film }}</strong></td>
-                <td>{{ seance.salle }}</td>
-                <td>{{ seance.DateSeance ? seance.DateSeance|date('d/m/Y H:i') : '' }}</td>
-                <td>{{ seance.NombrePlacesRestantes }}</td>
-                <td class="actions-cell">
-                    <a href="{{ path('app_seance_show', {'id': seance.id}) }}" class="action-link" title="Voir">👁️</a>
-                    <a href="{{ path('app_seance_edit', {'id': seance.id}) }}" class="action-link" title="Modifier">✏️</a>
-                    <form method="post" action="{{ path('app_seance_delete', {'id': seance.id}) }}" onsubmit="return confirm('Annuler cette séance ?');" style="display:inline;">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ seance.id) }}">
-                        <button class="action-link" style="background:none; border:none; cursor:pointer;">❌</button>
-                    </form>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">Aucune séance programmée</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_seance_new') }}">Create new</a>
+        <div class="table-card">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th class="text-left">Film</th>
+                        <th class="text-left">Date & Heure</th>
+                        <th class="text-center">Salle</th> {# Centré selon ta demande #}
+                        <th class="text-left">Remplissage</th>
+                        <th class="text-right">Actions</th> {# Aligné à droite #}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for seance in seances %}
+                    <tr>
+                        <td>
+                            <div class="film-mini-info">
+                                <img src="{{ asset('uploads/affiches/' ~ seance.film.affiche) }}" alt="">
+                                <span style="font-weight: bold;">{{ seance.film.nom }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="date-badge">
+                                <span style="font-size: 0.9rem; color: #444;">{{ seance.dateDiffusion|date('d/m/Y') }}</span>
+                                <span class="time">{{ seance.dateDiffusion|date('H:i') }}</span>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span style="color: #666; font-weight: 500;">
+                                <i class="fa-solid fa-location-dot"></i> {{ seance.salle.nom }}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.75rem; color: #777;">
+                                {{ seance.nbPlaceReservees|default(0) }} / {{ seance.salle.nbPlaces }}
+                            </div>
+                            <div class="occupancy-wrapper">
+                                {% set percent = (seance.nbPlaceReservees|default(0) / seance.salle.nbPlaces * 100) %}
+                                <div class="occupancy-bar" style="width: {{ percent }}%;"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <a href="{{ path('app_seance_show', {'id': seance.id}) }}" class="btn-icon btn-view" title="Voir"><i class="fa-solid fa-eye"></i></a>
+                                <a href="{{ path('app_seance_edit', {'id': seance.id}) }}" class="btn-icon btn-edit" title="Modifier"><i class="fa-solid fa-pen"></i></a>
+                                <form method="post" action="{{ path('app_seance_delete', {'id': seance.id}) }}" onsubmit="return confirm('Supprimer cette séance ?');" style="margin:0;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ seance.id) }}">
+                                    <button class="btn-icon btn-delete" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    {# Message si le tableau est vide #}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 60px; color: #999;">
+                            <i class="fa-solid fa-calendar-xmark" style="font-size: 3rem; margin-bottom: 15px; display: block; opacity: 0.3;"></i>
+                            <strong>Aucune séance n'est programmée pour le moment.</strong>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

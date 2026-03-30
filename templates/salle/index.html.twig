@@ -1,39 +1,106 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Salle index{% endblock %}
+{% block title %}Gestion des Salles | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        .admin-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        
+        /* Correction du Header : alignement horizontal propre */
+        .index-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px; 
+        }
+
+        .table-card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; }
+        .modern-table { width: 100%; border-collapse: collapse; }
+        
+        .modern-table th { background: #f8f9fa; color: #666; text-transform: uppercase; font-size: 0.75rem; padding: 15px 20px; text-align: left; }
+        
+        /* Alignement à droite pour l'en-tête Actions */
+        .modern-table th.text-right { text-align: right; }
+
+        .modern-table td { padding: 15px 20px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        
+        .room-icon { background: #fee2e2; color: #8b0000; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .capacity-badge { background: #e8f5e9; color: #2e7d32; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; }
+        
+        /* Alignement des boutons à droite de la cellule */
+        .actions-cell { 
+            display: flex; 
+            gap: 8px; 
+            justify-content: flex-end; 
+        }
+
+        .btn-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: 0.2s; text-decoration: none; }
+        .btn-view { background: #e3f2fd; color: #1976d2; }
+        .btn-edit { background: #fef3c7; color: #d97706; }
+        .btn-delete { background: #fee2e2; color: #dc2626; border: none; cursor: pointer; }
+        
+        /* Style du bouton d'ajout pour qu'il ne soit pas trop gros */
+        .btn-add {
+            background: #8b0000;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Salle index</h1>
+<div class="admin-container">
+    <div class="index-header">
+        <h1 style="color: #8b0000; font-size: 2rem; margin: 0;">Gestion des Salles</h1>
+        <a href="{{ path('app_salle_new') }}" class="btn-add">
+            <i class="fa-solid fa-plus"></i> Nouvelle Salle
+        </a>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nom de la Salle</th>
-                <th>Capacité (Places)</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for salle in salles %}
-            <tr>
-                <td><strong>{{ salle.Nom }}</strong></td>
-                <td>{{ salle.NbPlaces }}</td>
-                <td class="actions-cell">
-                    <a href="{{ path('app_salle_show', {'id': salle.id}) }}" class="action-link" title="Voir">👁️</a>
-                    <a href="{{ path('app_salle_edit', {'id': salle.id}) }}" class="action-link" title="Modifier">✏️</a>
-                    <form method="post" action="{{ path('app_salle_delete', {'id': salle.id}) }}" onsubmit="return confirm('Supprimer cette salle ?');" style="display:inline;">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ salle.id) }}">
-                        <button class="action-link" style="background:none; border:none; cursor:pointer;">❌</button>
-                    </form>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">Aucune salle enregistrée</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_salle_new') }}">Create new</a>
+    <div class="table-card">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">Salle</th>
+                    <th>Nom de la salle</th>
+                    <th>Capacité totale</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for salle in salles %}
+                <tr>
+                    <td><div class="room-icon"><i class="fa-solid fa-door-open"></i></div></td>
+                    <td style="font-weight: bold; font-size: 1.1rem;">{{ salle.nom }}</td>
+                    <td><span class="capacity-badge">{{ salle.nbPlaces }} sièges</span></td>
+                    <td>
+                        <div class="actions-cell">
+                            <a href="{{ path('app_salle_show', {'id': salle.id}) }}" class="btn-icon btn-view" title="Consulter">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a href="{{ path('app_salle_edit', {'id': salle.id}) }}" class="btn-icon btn-edit" title="Modifier">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <form method="post" action="{{ path('app_salle_delete', {'id': salle.id}) }}" onsubmit="return confirm('Supprimer cette salle ?');" style="margin:0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ salle.id) }}">
+                                <button class="btn-icon btn-delete" title="Supprimer">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

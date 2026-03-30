@@ -1,0 +1,58 @@
+/* Style du bouton Google */
+.google-auth-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.separator::before, .separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+}
+
+.separator-text {
+    padding: 0 10px;
+    color: #888;
+    font-size: 0.9em;
+}
+
+.google-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #4285F4;
+    color: white;
+    text-decoration: none;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.25);
+    transition: background-color .3s;
+    font-family: 'Roboto', arial, sans-serif;
+}
+
+.google-btn:hover {
+    background-color: #357ae8;
+    text-decoration: none;
+    color: white;
+}
+
+.google-icon-wrapper {
+    background-color: white;
+    padding: 11px;
+    margin: 1px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-text {
+    padding: 0 15px;
+    font-size: 14px;
+    font-weight: 500;
+}

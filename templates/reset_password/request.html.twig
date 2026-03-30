@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialisation | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="split-container">
+    <div class="left-side">
+        <h2>Un oubli ?</h2>
+        <p>Pas de panique, la magie d'Abracadabra opère ! Saisissez votre email pour retrouver l'accès à vos séances préférées.</p>
+    </div>
+
+    <div class="right-side">
+        <div class="login-box">
+            <h1>Mot de passe oublié</h1>
+
+            {# Affichage des messages de succès ou d'erreur #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'danger' ? 'danger' : 'success' }}" 
+                         style="padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; 
+                                background-color: {{ label == 'danger' ? '#ffdada' : '#d4edda' }}; 
+                                color: {{ label == 'danger' ? '#8b0000' : '#155724' }};">
+                        {{ message|raw }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <form method="post">
+                <div class="form-group">
+                    <label>Votre adresse Email</label>
+                    <input type="email" name="email" class="form-control" placeholder="exemple@mail.com" required autofocus>
+                </div>
+
+                <button type="submit" class="btn-login" style="margin-top: 20px;">Recevoir le lien</button>
+            </form>
+
+            <div style="margin-top: 20px; text-align: center; font-size: 0.8rem;">
+                <a href="{{ path('app_login') }}" style="color: #8b0000; text-decoration: none;">Retour à la connexion</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

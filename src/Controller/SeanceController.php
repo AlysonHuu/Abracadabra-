@@ -30,10 +30,21 @@ final class SeanceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // RÉCUPÉRATION ET FUSION
+            $datePart = $form->get('date_part')->getData(); // ex: 2026-03-26
+            $timePart = $form->get('time_part')->getData(); // ex: 14:30:00
+
+            if ($datePart && $timePart) {
+                $dateTime = new \DateTime();
+                $dateTime->setDate($datePart->format('Y'), $datePart->format('m'), $datePart->format('d'));
+                $dateTime->setTime($timePart->format('H'), $timePart->format('i'));
+                $seance->setDateDiffusion($dateTime);
+            }
+
             $entityManager->persist($seance);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_seance_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_seance_index');
         }
 
         return $this->render('seance/new.html.twig', [
@@ -54,9 +65,26 @@ final class SeanceController extends AbstractController
     public function edit(Request $request, Seance $seance, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(SeanceType::class, $seance);
+
+        if ($seance->getDateDiffusion()) {
+            $form->get('date_part')->setData($seance->getDateDiffusion());
+            $form->get('time_part')->setData($seance->getDateDiffusion());
+        }
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // FUSION des deux champs vers la propriété réelle
+            $datePart = $form->get('date_part')->getData();
+            $timePart = $form->get('time_part')->getData();
+
+            if ($datePart && $timePart) {
+                $dateTime = $seance->getDateDiffusion();
+                $dateTime->setDate($datePart->format('Y'), $datePart->format('m'), $datePart->format('d'));
+                $dateTime->setTime($timePart->format('H'), $timePart->format('i'));
+                $seance->setDateDiffusion($dateTime);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_seance_index', [], Response::HTTP_SEE_OTHER);

@@ -1,11 +1,92 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Salle{% endblock %}
+{% block title %}Nouvelle Salle | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        .form-card { 
+            background: white; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            max-width: 600px; 
+            margin: 40px auto; 
+            padding: 40px; 
+        }
+        
+        /* --- Style global pour les champs générés par Symfony --- */
+        .form-card div { margin-bottom: 20px; }
+        .form-card label { 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 8px; 
+            display: block; 
+        }
+        .form-card input[type="text"], 
+        .form-card input[type="number"], 
+        .form-card select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            font-family: inherit; 
+            font-size: 1rem; 
+            transition: 0.3s;
+        }
+        .form-card input:focus, .form-card select:focus { 
+            outline: none; 
+            border-color: #8b0000; 
+            box-shadow: 0 0 5px rgba(139,0,0,0.3); 
+        }
+        
+        /* --- Boutons et liens --- */
+        .btn-save { 
+            background: #8b0000; 
+            color: white; 
+            border: none; 
+            padding: 15px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 100%; 
+            margin-top: 10px; 
+            transition: 0.3s; 
+            font-size: 1.1rem; 
+        }
+        .btn-save:hover { background: #600000; transform: translateY(-2px); }
+        
+        .back-link { 
+            display: block; 
+            text-align: center; 
+            margin-top: 25px; 
+            color: #8b0000; 
+            text-decoration: none; 
+            font-weight: bold; 
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Salle</h1>
+<div class="container">
+    <div class="form-card">
+        <h1 style="color: #8b0000; margin-bottom:30px; text-align:center;">
+            <i class="fa-solid fa-door-open"></i> Ajouter une Salle
+        </h1>
 
-    {{ include('salle/_form.html.twig') }}
+        {{ form_start(form) }}
+            
+            {# Symfony génère les champs (nom, nb_places), notre CSS les rend beaux ! #}
+            {{ form_widget(form) }}
 
-    <a href="{{ path('app_salle_index') }}">back to list</a>
+            <button type="submit" class="btn-save">
+                <i class="fa-solid fa-check"></i> Enregistrer la salle
+            </button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('app_salle_index') }}" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Retour à la liste des salles
+        </a>
+    </div>
+</div>
 {% endblock %}

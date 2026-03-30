@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name abracadabra.local;
+    server_name abracadabra.local localhost 127.0.0.1;
     root /var/www/abracadabra/public;
 
     index index.php index.html;

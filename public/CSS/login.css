@@ -1,0 +1,175 @@
+h2 {
+    font-size:small;
+}
+.slider-container {
+    position: relative;
+    height: 300px; 
+    width: 100%;
+    max-width: 600px; /* Optionnel : évite que le texte s'étale trop sur écran géant */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slide {
+    position: absolute;
+    /* On enlève le top/left 50% qui peut créer des décalages si mal géré */
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    display: none;
+}
+
+.slide.active {
+    display: block;
+    opacity: 1;
+}
+
+.dots {
+    margin-top: 20px;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.dot.active {
+    background-color: white;
+}
+    .btn-login:hover {
+    background-color: #6a0000;
+    transform: translateY(-2px); /* Le bouton remonte légèrement */
+    box-shadow: 0 5px 15px rgba(139, 0, 0, 0.4); /* Ombre plus forte au survol */
+}
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f4f4;
+}
+
+.split-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Partie Gauche : Décorative */
+.left-side {
+    flex: 1.2;
+    background: linear-gradient(135deg, #570808 0%, #a30303 100%);
+    display: flex;
+    flex-direction: column;   /* Aligne les éléments verticalement (Titre -> Points) */
+    justify-content: center; /* Centre verticalement dans la colonne */
+    align-items: center;     /* Centre horizontalement dans la colonne */
+    color: white;
+    padding: 40px;
+    text-align: center;      /* Force le texte à rester au milieu */
+    position: relative;      /* Nécessaire pour les slides en absolute */
+}
+
+.left-side h2 { font-size: 3rem; margin-bottom: 10px; }
+.left-side p { font-size: 1.2rem; opacity: 0.8; max-width: 400px; }
+
+/* Partie Droite : Formulaire */
+.right-side {
+    flex: 1;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 380px;
+}
+
+.login-box h1 { color: #333; margin-bottom: 30px; font-size: 2rem; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+.form-group input:focus { border-color: #8b0000; outline: none; }
+
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    background: #8b0000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Responsive : sur téléphone, on cache la partie gauche */
+@media (max-width: 768px) {
+    .left-side { display: none; }
+}
+
+/* Conteneur et séparateur */
+.google-login-container {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.separator {
+    font-size: 0.8rem;
+    color: #757575;
+    margin-bottom: 20px;
+}
+
+/* Le bouton principal */
+.btn-google-standard {
+    display: inline-flex;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    padding: 0 12px;
+    height: 40px;
+    text-decoration: none;
+    transition: background-color .3s, box-shadow .3s;
+    font-family: 'Roboto', arial, sans-serif;
+}
+
+.btn-google-standard:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.30), 0 1px 3px 1px rgba(60,64,67,0.15);
+}
+
+/* L'icône G */
+.google-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+}
+
+.google-icon {
+    width: 100%;
+}
+
+/* Le texte */
+.google-btn-text {
+    color: #3c4043;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.25px;
+}

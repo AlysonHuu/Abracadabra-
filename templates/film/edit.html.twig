@@ -1,20 +1,142 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Film{% endblock %}
+{% block title %}Modifier {{ film.Nom }} | Admin{% endblock %}
 
-{% block body %}
-    <h1>Edit Film</h1>
+{% block stylesheets %}
+    {# On réutilise ton CSS global pour la cohérence #}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        .edit-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
 
-    {{ include('film/_form.html.twig', {'button_label': 'Update'}) }}
+        .current-poster-section {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid #eee;
+        }
 
-    <a href="{{ path('app_film_index') }}">back to list</a>
+        .current-poster-section img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+        }
 
-    {{ include('film/_delete_form.html.twig') }}
+        .form-section {
+            flex: 2;
+            padding: 40px;
+        }
+
+        .form-section h1 {
+            color: #8b0000;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+        }
+
+        /* Styling des champs pour qu'ils ressemblent à tes autres pages */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; margin-bottom: 5px; display: block; color: #444; }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus { border-color: #8b0000; outline: none; }
+
+        .admin-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 {% endblock %}
 
-{% if film.Affiche %}
-    <p>Affiche actuelle :</p>
-    <img src="{{ asset('uploads/affiches/' ~ film.Affiche) }}" width="150" alt="Affiche actuelle">
-{% endif %}
+{% block body %}
+<div class="container">
+    <div class="edit-card">
+        {# SECTION GAUCHE : VISUALISATION #}
+        <div class="current-poster-section">
+            <p style="font-weight: bold; color: #666; margin-bottom: 20px;">Affiche actuelle</p>
+            {% if film.Affiche %}
+                <img src="{{ asset('uploads/affiches/' ~ film.Affiche) }}" alt="Affiche actuelle">
+            {% else %}
+                <div style="padding: 50px; background: #ddd; border-radius: 8px; color: #888;">
+                    Aucune affiche
+                </div>
+            {% endif %}
+            <p style="font-size: 0.8rem; color: #999; text-align: center;">
+                Fichier : {{ film.Affiche }}
+            </p>
+        </div>
 
-{{ form_row(form.Affiche) }}
+        {# SECTION DROITE : FORMULAIRE #}
+        <div class="form-section">
+            <h1><i class="fa-solid fa-pen-to-square"></i> Modifier le film</h1>
+
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        {{ form_row(form.Nom, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form_row(form.Affiche, {
+                        'label': 'Changer l\'affiche (Fichier image)',
+                        'attr': {'class': 'form-control'}
+                    }) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_row(form.Description, {'attr': {'class': 'form-control', 'rows': '3'}}) }}
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">{{ form_row(form.Genre, {'attr': {'class': 'form-control'}}) }}</div>
+                    <div class="form-group">{{ form_row(form.dateSortie, {'attr': {'class': 'form-control'}}) }}</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">{{ form_row(form.Duree, {'attr': {'class': 'form-control'}}) }}</div>
+                    <div class="form-group">{{ form_row(form.Note, {'attr': {'class': 'form-control'}}) }}</div>
+                </div>
+
+                <div class="form-group">
+                    {{ form_widget(form.estDispo) }}
+                    {{ form_label(form.estDispo) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_row(form.Commentaire, {'attr': {'class': 'form-control', 'rows': '2'}}) }}
+                </div>
+
+                <button type="submit" class="btn-login" style="width: 100%; border: none; margin-top: 10px;">
+                    Enregistrer les modifications
+                </button>
+            {{ form_end(form) }}
+
+            <div class="admin-actions">
+                <a href="{{ path('app_film_index') }}" style="color: #666; text-decoration: none; font-size: 0.9rem;">
+                    <i class="fa-solid fa-arrow-left"></i> Retour à la liste
+                </a>
+                {{ include('film/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,42 +1,159 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Salle{% endblock %}
+{% block title %}Détails de la Salle | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        .show-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .show-card h1 {
+            color: #8b0000;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: inline-block;
+            min-width: 200px;
+            border: 1px solid #eee;
+        }
+
+        .stat-box i {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            display: block;
+            color: #666;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #8b0000;
+        }
+
+        /* --- Barre d'actions --- */
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            color: #666;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f1f1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .btn-secondary:hover { background: #e2e2e2; color: #333; }
+
+        .btn-edit {
+            color: #d97706;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid #d97706;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .btn-edit:hover { background: #d97706; color: white; }
+
+        /* Bouton suppression natif Symfony */
+        .delete-wrapper button {
+            background: transparent;
+            color: #d9534f;
+            border: 1px solid #d9534f;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+        .delete-wrapper button:hover {
+            background: #d9534f;
+            color: white;
+        }
+
+        .metadata {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Salle</h1>
+<div class="container">
+    <div class="show-card">
+        <h1><i class="fa-solid fa-door-open"></i> {{ salle.nom }}</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ salle.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ salle.Nom }}</td>
-            </tr>
-            <tr>
-                <th>NbPlaces</th>
-                <td>{{ salle.NbPlaces }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ salle.createdAt ? salle.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ salle.updatedAt ? salle.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DeletedAt</th>
-                <td>{{ salle.deletedAt ? salle.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="stat-box">
+            <i class="fa-solid fa-couch"></i>
+            <span class="stat-label">Capacité d'accueil</span>
+            <span class="stat-value">{{ salle.nbPlaces }}</span>
+            <span style="color: #666; font-weight: bold;">sièges</span>
+        </div>
 
-    <a href="{{ path('app_salle_index') }}">back to list</a>
+        <div class="action-bar">
+            <a href="{{ path('app_salle_index') }}" class="btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i> Liste des salles
+            </a>
+            
+            <a href="{{ path('app_salle_edit', {'id': salle.id}) }}" class="btn-edit">
+                <i class="fa-solid fa-pen"></i> Modifier
+            </a>
 
-    <a href="{{ path('app_salle_edit', {'id': salle.id}) }}">edit</a>
+            <div class="delete-wrapper">
+                {{ include('salle/_delete_form.html.twig') }}
+            </div>
+        </div>
 
-    {{ include('salle/_delete_form.html.twig') }}
+        <div class="metadata">
+            ID Salle : #{{ salle.id }} • Créée le {{ salle.createdAt ? salle.createdAt|date('d/m/Y H:i') : 'N/A' }}
+            {% if salle.updatedAt %}
+                <br>Dernière modification le {{ salle.updatedAt|date('d/m/Y H:i') }}
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

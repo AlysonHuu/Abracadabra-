@@ -44,6 +44,10 @@ class Film
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $Commentaire = null;
 
+    // NOUVEAU CHAMP AURA AJOUTÉ ICI
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $aura = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -184,6 +188,19 @@ class Film
         return $this;
     }
 
+    // GETTER ET SETTER POUR L'AURA
+    public function getAura(): ?string
+    {
+        return $this->aura;
+    }
+
+    public function setAura(?string $aura): static
+    {
+        $this->aura = $aura;
+
+        return $this;
+    }
+
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -241,7 +258,6 @@ class Film
     public function removeSeance(Seance $seance): static
     {
         if ($this->seances->removeElement($seance)) {
-            // set the owning side to null (unless already changed)
             if ($seance->getFilm() === $this) {
                 $seance->setFilm(null);
             }
