@@ -11,7 +11,35 @@
         .dt-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .input-icon { position: relative; }
         .input-icon i { position: absolute; right: 15px; top: 15px; color: #8b0000; }
-        .btn-save { background: #8b0000; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
+        .btn-save { background: #8b0000; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; transition: 0.3s; }
+        .btn-save:hover { background: #600000; transform: translateY(-2px); }
+
+        /* --- NOUVEAU STYLE : ZONE DE PRÉVISUALISATION --- */
+        .preview-container {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 2px dashed #ddd;
+            display: none; /* Caché par défaut */
+        }
+        #film-preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            object-fit: contain;
+        }
+        .preview-title {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            display: block;
+        }
     </style>
 {% endblock %}
 
@@ -21,6 +49,13 @@
         <h1 style="color: #8b0000; margin-bottom:30px;"><i class="fa-solid fa-clock-rotate-left"></i> Programmation</h1>
 
         {{ form_start(form) }}
+            
+            {# --- NOUVELLE ZONE D'AFFICHAGE DE L'AFFICHE --- #}
+            <div id="preview-box" class="preview-container">
+                <span class="preview-title">Affiche du film sélectionné :</span>
+                <img id="film-preview-img" alt="Prévisualisation de l'affiche">
+            </div>
+
             <div class="dt-container">
                 <div class="form-group">
                     {{ form_label(form.date_part) }}
@@ -81,6 +116,46 @@
                 time_24hr: true,
                 minuteIncrement: 15
             });
+
+            // ==========================================================
+            // LOGIQUE JAVASCRIPT : PRÉVISUALISATION DYNAMIQUE DU FILM
+            // ==========================================================
+            
+            // 1. On crée un dictionnaire généré par Twig (ID du film => URL de l'image)
+            const moviePosters = {
+                {% for choice in form.film.vars.choices %}
+                    {% if choice.data.affiche is not empty %}
+                        "{{ choice.value }}": "{{ asset('uploads/affiches/' ~ choice.data.affiche) }}",
+                    {% endif %}
+                {% endfor %}
+            };
+
+            // 2. On cible le menu déroulant des films via l'ID généré par Symfony
+            const filmSelectNode = document.getElementById('{{ form.film.vars.id }}');
+            const previewBox = document.getElementById('preview-box');
+            const previewImg = document.getElementById('film-preview-img');
+
+            if (filmSelectNode) {
+                // 3. Fonction qui met à jour l'image en fonction de la sélection
+                function updatePreview() {
+                    const selectedId = filmSelectNode.value;
+                    
+                    if (selectedId && moviePosters[selectedId]) {
+                        previewImg.src = moviePosters[selectedId];
+                        previewBox.style.display = 'block';
+                    } else {
+                        previewBox.style.display = 'none';
+                        previewImg.removeAttribute('src');
+                    }
+                }
+
+                // 4. On écoute à chaque fois que l'utilisateur change de film
+                filmSelectNode.addEventListener('change', updatePreview);
+                
+                // 5. On lance la fonction au chargement (au cas où un film est déjà pré-sélectionné)
+                updatePreview();
+            }
+            // ==========================================================
         });
     </script>
 {% endblock %}

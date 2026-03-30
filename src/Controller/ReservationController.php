@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\ReservationRepository;
-use App\Service\MagicAiService;
+// On n'a plus besoin de MagicAiService ici pour l'affichage !
 
 class ReservationController extends AbstractController
 {
@@ -27,7 +27,6 @@ class ReservationController extends AbstractController
             $nbPlaces = (int) $request->request->get('nb_places');
 
             if ($nbPlaces > 0) {
-                // Initialisation de Stripe avec ta clé secrète du .env
                 Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
 
                 $session = Session::create([
@@ -73,12 +72,9 @@ class ReservationController extends AbstractController
         $reservation->setNbPlaces($nb);
         $reservation->setPrixTotal($nb * $prixUnitaire);
 
-        // Génération d'un jeton unique pour le QR Code (32 caractères aléatoires)
         $token = bin2hex(random_bytes(16));
         $reservation->setTicketToken($token);
-        // ------------------------------
 
-        // Mise à jour du compteur de places de la séance
         $seance->setNbPlaceReservees($seance->getNbPlaceReservees() + $nb);
 
         $em->persist($reservation);
@@ -90,26 +86,12 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/mes-reservations', name: 'app_reservation_index')]
-    public function index(ReservationRepository $repository, MagicAiService $aiService): Response
+    public function index(ReservationRepository $repository): Response
     {
         $reservations = $repository->findBy(['user' => $this->getUser()]);
-        $reservationsWithAura = [];
-
-        foreach ($reservations as $res) {
-            // On utilise le nom du film pour l'analyse de l'aura 
-            $nomFilm = $res->getSeance()->getFilm()->getNom();
-            $aura = $aiService->analyzeAura($nomFilm);
-            
-            $reservationsWithAura[] = [
-                'data' => $res,
-                'aura' => $aura
-            ];
-        }
 
         return $this->render('reservation/index.html.twig', [
-            'reservations' => $reservationsWithAura
+            'reservations' => $reservations
         ]);
     }
-
-
-}   
+}

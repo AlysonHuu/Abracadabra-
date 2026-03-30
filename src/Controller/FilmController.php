@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Film;
 use App\Form\FilmType;
 use App\Repository\FilmRepository;
+use App\Service\MagicAiService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,25 +14,46 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/film')]
 final class FilmController extends AbstractController
 {
+    #[Route('/recherche', name: 'app_film_search', methods: ['GET'])]
+    public function search(Request $request, FilmRepository $filmRepository): Response
+    {
+        $query = $request->query->get('q');
+        $films = [];
+
+        if ($query) {
+            
+            $films = $filmRepository->createQueryBuilder('f')
+                ->where('f.Nom LIKE :q')
+                ->andWhere('f.deletedAt IS NULL')
+                ->andWhere('f.createdAt IS NOT NULL')
+                ->setParameter('q', '%' . $query . '%')
+                ->orderBy('f.Nom', 'ASC')
+                ->getQuery()
+                ->getResult();
+        }
+
+        return $this->render('film/search_results.html.twig', [
+            'films' => $films,
+            'query' => $query
+        ]);
+    }
+
     #[Route('/', name: 'app_film_index', methods: ['GET'])]
     public function index(FilmRepository $filmRepository): Response
     {
         return $this->render('film/index.html.twig', [
-
-            // On ne récupère que ceux qui n'ont PAS de date de suppression. 
-            // Autrement dit, ceux qui ont étés supprimés ne s'affichent plus. 
             'films' => $filmRepository->findBy(['deletedAt' => null]),
         ]);
     }
 
     #[Route('/new', name: 'app_film_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, MagicAiService $aiService): Response
     {
         $film = new Film();
         $form = $this->createForm(FilmType::class, $film);
@@ -43,20 +65,14 @@ final class FilmController extends AbstractController
 
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // On nettoie le nom du fichier pour l'URL
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                // On déplace le fichier dans le dossier public/uploads/affiches
-                // On utilise bien 'affiches_directory' défini dans services.yaml
-                $imageFile->move(
-                    $this->getParameter('affiches_directory'), 
-                    $newFilename
-                );
-
-                // On enregistre le NOM du fichier (string) dans la propriété Affiche de l'entité
+                $imageFile->move($this->getParameter('affiches_directory'), $newFilename);
                 $film->setAffiche($newFilename);
             }
+
+            // Calcul de l'aura par l'IA
+            $film->setAura($aiService->analyzeAura($film->getNom()));
 
             $entityManager->persist($film);
             $entityManager->flush();
@@ -64,25 +80,17 @@ final class FilmController extends AbstractController
             return $this->redirectToRoute('app_film_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('film/new.html.twig', [
-            'film' => $film,
-            'form' => $form,
-        ]);
+        return $this->render('film/new.html.twig', ['film' => $film, 'form' => $form]);
     }
 
-    #[Route('/{id}', name: 'app_film_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_film_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(Film $film): Response
     {
-        $seances = $film->getSeances();
         $seancesParJour = [];
-
-        foreach ($seances as $seance) {
-            // On crée une clé par jour (ex: "2026-03-26")
+        foreach ($film->getSeances() as $seance) {
             $dateKey = $seance->getDateDiffusion()->format('Y-m-d');
             $seancesParJour[$dateKey][] = $seance;
         }
-
-        // On trie les jours pour qu'ils soient dans l'ordre chronologique
         ksort($seancesParJour);
 
         return $this->render('film/show.html.twig', [
@@ -91,72 +99,60 @@ final class FilmController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_film_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_film_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Film $film, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
-        // 1. On stocke le nom de l'affiche actuelle au cas où on ne la change pas
         $ancienneAffiche = $film->getAffiche();
-
         $form = $this->createForm(FilmType::class, $film);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $imageFile */
             $imageFile = $form->get('Affiche')->getData();
-
-            // 2. Si une nouvelle image est uploadée
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                try {
-                    $imageFile->move(
-                        $this->getParameter('affiches_directory'),
-                        $newFilename
-                    );
-                    
-                    // Optionnel : Supprimer l'ancien fichier physique du dossier pour ne pas encombrer le serveur
-                    if ($ancienneAffiche && file_exists($this->getParameter('affiches_directory').'/'.$ancienneAffiche)) {
-                        unlink($this->getParameter('affiches_directory').'/'.$ancienneAffiche);
-                    }
-
-                    // On met à jour l'entité avec le nouveau nom de fichier
-                    $film->setAffiche($newFilename);
-
-                } catch (FileException $e) {
-                    // Gérer l'erreur si nécessaire
+                $imageFile->move($this->getParameter('affiches_directory'), $newFilename);
+                if ($ancienneAffiche && file_exists($this->getParameter('affiches_directory').'/'.$ancienneAffiche)) {
+                    unlink($this->getParameter('affiches_directory').'/'.$ancienneAffiche);
                 }
+                $film->setAffiche($newFilename);
             } else {
-                // 3. Si aucune nouvelle image n'est choisie, on garde l'ancienne
                 $film->setAffiche($ancienneAffiche);
             }
-
             $entityManager->flush();
-
             return $this->redirectToRoute('app_film_index', [], Response::HTTP_SEE_OTHER);
         }
-
-        return $this->render('film/edit.html.twig', [
-            'film' => $film,
-            'form' => $form,
-        ]);
+        return $this->render('film/edit.html.twig', ['film' => $film, 'form' => $form]);
     }
 
-    #[Route('/{id}', name: 'app_film_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_film_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Film $film, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$film->getId(), $request->getPayload()->getString('_token'))) {
-            
             $film->setDeletedAt(new \DateTimeImmutable());
-            
             $film->setEstDispo(false); 
-
             $entityManager->flush();
         }
-
         return $this->redirectToRoute('app_film_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/rattrapage-auras', name: 'app_film_rattrapage', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function rattrapageAuras(FilmRepository $repo, MagicAiService $aiService, EntityManagerInterface $em): Response
+    {
+        $films = $repo->findAll();
+        $compteur = 0;
+        foreach ($films as $film) {
+            if (!$film->getAura()) {
+                $film->setAura($aiService->analyzeAura($film->getNom()));
+                $compteur++;
+            }
+        }
+        $em->flush();
+        return new Response("Magie terminée ! $compteur films mis à jour.");
     }
 }

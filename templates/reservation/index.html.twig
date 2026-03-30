@@ -14,7 +14,8 @@
 
     /* --- STYLE DES TICKETS --- */
     .ticket-card {
-        background: #f4ecd8; display: flex; height: 220px;
+        background: #f4ecd8;
+        display: flex; height: 220px;
         position: relative; border-radius: 15px;
         box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         overflow: hidden; border: 1px solid rgba(0,0,0,0.1);
@@ -23,10 +24,12 @@
     }
 
     .ticket-card::before {
-        content: ""; position: absolute; top: 0; left: -150%;
+        content: ""; position: absolute; top: 0;
+        left: -150%;
         width: 60%; height: 100%;
         background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent);
-        transform: skewX(-25deg); z-index: 5; pointer-events: none;
+        transform: skewX(-25deg); z-index: 5;
+        pointer-events: none;
     }
 
     .ticket-card:hover::before { animation: shineSweep 6s infinite; }
@@ -49,9 +52,10 @@
     .ticket-film-name { color: #8b0000; font-size: 1.4rem; font-weight: 900; }
     .ticket-qr-section { flex: 0 0 110px; display: flex; align-items: center; justify-content: center; border-left: 2px dashed rgba(0,0,0,0.08); }
 
-    /* --- STYLE DE LA MODALE MAGIQUE (CORRECTION) --- */
+    /* --- STYLE DE LA MODALE MAGIQUE --- */
     #magic-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
         z-index: 9999; display: flex; align-items: center; justify-content: center;
         opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
@@ -59,12 +63,14 @@
     #magic-overlay.active { opacity: 1; pointer-events: auto; }
 
     .magic-modal {
-        background: white; width: 90%; max-width: 500px; padding: 40px;
+        background: white; width: 90%; max-width: 500px;
+        padding: 40px;
         border-radius: 30px; text-align: center; position: relative;
     }
 
     .close-magic {
-        position: absolute; top: 20px; right: 25px;
+        position: absolute;
+        top: 20px; right: 25px;
         background: none; border: none; font-size: 2rem; color: #ccc; cursor: pointer;
     }
 
@@ -76,7 +82,8 @@
     .large-qr-container img { width: 260px; height: 260px; display: block; position: relative; z-index: 1; }
 
     .scan-line {
-        position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+        position: absolute; top: 0;
+        left: 0; width: 100%; height: 4px;
         background: #ff0000; box-shadow: 0 0 15px #ff0000; z-index: 10;
         animation: scanAnim 3s infinite ease-in-out;
     }
@@ -96,21 +103,21 @@
 
     <div class="tickets-container">
         {% for res in reservations %}
-            {# On utilise res.data pour les données et res.aura pour la classe [cite: 1] #}
-            <div class="ticket-card aura-{{ res.aura|default('MYSTERE') }} shine-anim" 
-                onclick="openTicket('{{ res.data.ticketToken }}', '{{ res.data.seance.film.nom|escape('js') }}')">
+            {# L'aura est désormais lue directement depuis la base de données via le film #}
+            <div class="ticket-card aura-{{ res.seance.film.aura|default('MYSTERE') }} shine-anim" 
+                 onclick="openTicket('{{ res.ticketToken }}', '{{ res.seance.film.nom|escape('js') }}')">
                 
                 <div class="ticket-poster">
-                    <img src="{{ asset('uploads/affiches/' ~ res.data.seance.film.affiche) }}" alt="Affiche">
+                    <img src="{{ asset('uploads/affiches/' ~ res.seance.film.affiche) }}" alt="Affiche">
                 </div>
                 
                 <div class="ticket-info">
-                    <div class="ticket-film-name">{{ res.data.seance.film.nom }}</div>
+                    <div class="ticket-film-name">{{ res.seance.film.nom }}</div>
                     <div class="ticket-details">
-                        <div><i class="fa-solid fa-calendar"></i> {{ res.data.seance.dateDiffusion|date('d/m/Y') }}</div>
-                        <div><i class="fa-solid fa-clock"></i> {{ res.data.seance.dateDiffusion|date('H:i') }}</div>
+                        <div><i class="fa-solid fa-calendar"></i> {{ res.seance.dateDiffusion|date('d/m/Y') }}</div>
+                        <div><i class="fa-solid fa-clock"></i> {{ res.seance.dateDiffusion|date('H:i') }}</div>
                         <div style="margin-top: 10px; font-weight: bold; color: #8b0000; text-decoration: underline;">
-                            {{ res.data.nbPlaces }} PLACE(S) RÉSERVÉE(S)
+                            {{ res.nbPlaces }} PLACE(S) RÉSERVÉE(S)
                         </div>
                     </div>
                 </div>
@@ -122,6 +129,8 @@
                     </div>
                 </div>
             </div>
+        {% else %}
+            <p style="text-align: center; width: 100%; font-size: 1.2rem; color: #666;">Vous n'avez aucune réservation pour le moment.</p>
         {% endfor %}
     </div>
 </div>
@@ -135,7 +144,6 @@
             <p style="color: #666; margin-bottom: 25px;">Cliquez sur le QR Code pour valider votre entrée</p>
             <div class="large-qr-container" onclick="startMagicScan()">
                 <div class="scan-line"></div>
-                {# On affiche le QR code dès le début #}
                 <img id="large-qr-img" src="" alt="QR Code">
             </div>
         </div>
@@ -147,7 +155,6 @@
                 <div class="magic-progress-bar"><div id="magic-fill" class="magic-progress-fill"></div></div>
                 <p id="magic-status" style="font-weight: bold; color: #555;">Initialisation du protocole...</p>
              </div>
-             {# QR Code reste visible en filigrane pendant le scan #}
              <div style="opacity: 0.1; transform: scale(0.6); margin-top: -60px;">
                 <img id="qr-mini-bg" src="" style="width: 250px;">
              </div>
@@ -164,37 +171,30 @@
 
 <script>
 let currentFilm = "";
-let currentUserName = "{{ app.user.prenom }}";
+let currentUserName = "{{ app.user.prenom|default('Cinéphile') }}";
 
 /**
  * EFFET 3D "HAPPÉ" PAR LA SOURIS
- * Gère l'inclinaison et le léger déplacement du ticket vers le curseur
  */
 document.querySelectorAll('.ticket-card').forEach(card => {
     card.addEventListener('mousemove', e => {
         const rect = card.getBoundingClientRect();
-        
-        // Calcul de la position de la souris à l'intérieur du ticket
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
         
-        // Inclinaison calculée (diviseur 12 pour plus de subtilité)
         const rotateX = (y - centerY) / 12;
         const rotateY = (centerX - x) / 12;
         
-        // Effet d'attraction (déplacement vers la souris)
         const moveX = (x - centerX) / 15;
         const moveY = (y - centerY) / 15;
 
-        // Application de la transformation 3D
         card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate3d(${moveX}px, ${moveY}px, 20px) scale(1.02)`;
     });
 
     card.addEventListener('mouseleave', () => {
-        // Remet le ticket parfaitement à plat quand la souris sort
         card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0) scale(1)`;
     });
 });
@@ -204,18 +204,14 @@ document.querySelectorAll('.ticket-card').forEach(card => {
  */
 function openTicket(token, filmName) {
     currentFilm = filmName;
-    
-    // Chargement dynamique du QR Code
-    const qrUrl = "/qrcode/" + token;
+    const qrUrl = "/qrcode/" + token; // Assure-toi que cette route existe bien dans ton projet
     document.getElementById('large-qr-img').src = qrUrl;
     document.getElementById('qr-mini-bg').src = qrUrl;
     
-    // Réinitialisation des étapes de la modale
     document.getElementById('step-qr').style.display = 'block';
     document.getElementById('step-animation').style.display = 'none';
     document.getElementById('step-final').style.display = 'none';
     
-    // Ouverture de l'overlay
     document.getElementById('magic-overlay').classList.add('active');
 }
 
@@ -228,14 +224,12 @@ function startMagicScan() {
     const steps = ["Analyse VIP...", "Calcul jury...", "Pop-corn localisé...", "Magie en cours...", "Accès autorisé !"];
     let stepIndex = 0;
 
-    // Lancement de la barre de progression (6 secondes)
     fill.style.width = "0%";
     setTimeout(() => {
         fill.style.transition = "width 6s linear";
         fill.style.width = "100%";
     }, 50);
 
-    // Changement des messages d'état
     const interval = setInterval(() => {
         if (stepIndex < steps.length) {
             status.innerText = steps[stepIndex];

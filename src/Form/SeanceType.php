@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Film;
 use App\Entity\Salle;
 use App\Entity\Seance;
+use Doctrine\ORM\EntityRepository; // <-- IMPORTANT : Import pour filtrer la base de données
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -31,27 +32,37 @@ class SeanceType extends AbstractType
                 'label' => 'Horaire',
                 'attr' => ['class' => 'form-control time-picker', 'placeholder' => 'Choisir l\'heure']
             ])
-            ->add('film', EntityType::class, [
-                'class' => Film::class,
-                'choice_label' => 'Nom',
-                'label' => 'Film'
-            ])
-            ->add('salle', EntityType::class, [
-                'class' => Salle::class,
-                'choice_label' => 'nom',
-                'label' => 'Salle'
-            ])
-            // On garde le champ réel masqué pour la réception des données
-            ->add('NbPlaceReservees', null, ['attr' => ['style' => 'display:none;'], 'data' => 0, 'label' => false])
+            
+            // --- LE CHAMP FILM UNIFIÉ ET OPTIMISÉ ---
             ->add('film', EntityType::class, [
                 'class' => Film::class,
                 'choice_label' => 'Nom',
                 'label' => 'Film',
-                'attr' => ['class' => 'form-control film-select'], // On ajoute une classe pour le JS
-                'choice_attr' => function($film) {
-                    // On stocke le nom de l'affiche dans un attribut "data-poster"
-                    return ['data-poster' => $film->getAffiche()];
+                
+                // 1. Le texte par défaut (règle le problème de l'image qui s'affiche de suite)
+                'placeholder' => '--- Sélectionnez un film ---',
+                
+                // 2. Le filtre "Soft Delete" (exclut les films supprimés)
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('f')
+                        ->where('f.deletedAt IS NULL')
+                        ->orderBy('f.Nom', 'ASC'); // Tri alphabétique
                 },
+                'attr' => ['class' => 'form-control']
+            ])
+            
+            ->add('salle', EntityType::class, [
+                'class' => Salle::class,
+                'choice_label' => 'nom',
+                'label' => 'Salle',
+                'attr' => ['class' => 'form-control'] // Ajout direct de la classe CSS
+            ])
+            
+            // On garde le champ réel masqué pour la réception des données
+            ->add('NbPlaceReservees', null, [
+                'attr' => ['style' => 'display:none;'], 
+                'data' => 0, 
+                'label' => false
             ])
         ;
     }

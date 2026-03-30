@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultats pour "{{ query }}" | Abracadabra{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .results-container { padding: 40px; max-width: 1200px; margin: 0 auto; }
+    .search-header { margin-bottom: 40px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+    .search-header h1 { color: #8b0000; font-weight: 800; }
+    
+    .movies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 30px;
+    }
+
+    .movie-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: 0.3s;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(139,0,0,0.15);
+    }
+
+    .movie-poster {
+        height: 280px;
+        background: #1a1a1a;
+    }
+
+    .movie-poster img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .movie-body {
+        padding: 15px;
+        text-align: center;
+    }
+
+    .movie-title {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .movie-genre {
+        font-size: 0.8rem;
+        color: #888;
+        text-transform: uppercase;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 100px 20px;
+        color: #666;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="results-container">
+    <div class="search-header">
+        <h1><i class="fa-solid fa-magnifying-glass"></i> Résultats de recherche</h1>
+        <p>Pour le terme : <strong>"{{ query }}"</strong></p>
+    </div>
+
+    {% if films|length > 0 %}
+        <div class="movies-grid">
+            {% for film in films %}
+                <a href="{{ path('app_film_show', {'id': film.id}) }}" class="movie-card">
+                    <div class="movie-poster">
+                        <img src="{{ asset('uploads/affiches/' ~ film.affiche) }}" alt="{{ film.nom }}">
+                    </div>
+                    <div class="movie-body">
+                        <div class="movie-title">{{ film.nom }}</div>
+                        <div class="movie-genre">{{ film.genre }}</div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-results">
+            <i class="fa-solid fa-ghost fa-4x" style="margin-bottom: 20px; color: #ddd;"></i>
+            <h2>Aucun film trouvé</h2>
+            <p>Désolé, l'Oracle n'a trouvé aucune trace du film "{{ query }}" dans nos archives.</p>
+            <a href="{{ path('cinema_homepage') }}" class="btn btn-outline-danger mt-4">Retour à l'accueil</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
