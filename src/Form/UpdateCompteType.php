@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class UpdateCompteType extends AbstractType
 {
@@ -19,7 +20,7 @@ class UpdateCompteType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'Votre Email',
-                'disabled' => true, // L'email reste fixe pour la sécurité
+                'disabled' => true, 
             ])
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
@@ -29,6 +30,16 @@ class UpdateCompteType extends AbstractType
                 'label' => 'Prénom',
                 'required' => true,
             ])
+
+             ->add('dateNaissance', DateType::class, [
+                'label'    => 'Date de naissance',
+                'widget'   => 'single_text',
+                'required' => false,
+                'input'    => 'datetime',   
+                'attr'     => [
+                'max' => (new \DateTime())->format('Y-m-d'),
+                ],
+                ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'mapped' => false,

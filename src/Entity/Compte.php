@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CompteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -59,6 +60,7 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->reservation = new ArrayCollection();
         $this->reservations = new ArrayCollection();
+        $this->bonFidelites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -247,6 +249,15 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $reservations;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTime $dateNaissance = null;
+
+    /**
+     * @var Collection<int, BonFidelite>
+     */
+    #[ORM\OneToMany(targetEntity: BonFidelite::class, mappedBy: 'user')]
+    private Collection $bonFidelites;
+
     public function getResetToken(): ?string
     {
         return $this->resetToken;
@@ -276,5 +287,58 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
     public function getReservations(): Collection
     {
         return $this->reservations;
+    }
+
+    public function getDateNaissance(): ?\DateTime
+    {
+        return $this->dateNaissance;
+    }
+
+    public function setDateNaissance(?\DateTime $dateNaissance): static
+    {
+        $this->dateNaissance = $dateNaissance;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BonFidelite>
+     */
+    public function getBonFidelites(): Collection
+    {
+        return $this->bonFidelites;
+    }
+
+    public function addBonFidelite(BonFidelite $bonFidelite): static
+    {
+        if (!$this->bonFidelites->contains($bonFidelite)) {
+            $this->bonFidelites->add($bonFidelite);
+            $bonFidelite->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBonFidelite(BonFidelite $bonFidelite): static
+    {
+        if ($this->bonFidelites->removeElement($bonFidelite)) {
+            // set the owning side to null (unless already changed)
+            if ($bonFidelite->getUser() === $this) {
+                $bonFidelite->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+   public function getAge(): ?int
+    {
+        if (!$this->dateNaissance) return null;
+        return (new \DateTime())->diff($this->dateNaissance)->y;
+    }
+
+    public function getBonsFideliteDisponibles(): Collection
+    {
+    return $this->bonFidelites->filter(fn($b) => !$b->isUtilise());
     }
 }

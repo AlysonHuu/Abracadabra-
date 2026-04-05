@@ -30,6 +30,9 @@ class Reservation
     #[ORM\Column(length: 255)]
     private ?string $ticketToken = null;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $gratuite = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -93,5 +96,15 @@ class Reservation
         $this->ticketToken = $ticketToken;
 
         return $this;
+    }
+
+    public function isGratuite(): bool { 
+        return $this->gratuite; 
+    }
+
+    public function setGratuite(bool $gratuite): static
+    {
+    $this->gratuite = $gratuite;
+    return $this;
     }
 }

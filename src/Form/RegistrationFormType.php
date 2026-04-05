@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 
 class RegistrationFormType extends AbstractType
 {
@@ -24,25 +25,36 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Nom',
                 'attr' => ['placeholder' => 'Votre nom'],
                 'constraints' => [
-                    new NotBlank(message: 'Le nom est obligatoire') // Correction ici
+                    new NotBlank(message: 'Le nom est obligatoire') 
                 ]
             ])
             ->add('prenom', TextType::class, [
                 'label' => 'Prénom',
                 'attr' => ['placeholder' => 'Votre prénom'],
                 'constraints' => [
-                    new NotBlank(message: 'Le prénom est obligatoire') // Correction ici
+                    new NotBlank(message: 'Le prénom est obligatoire') 
                 ]
             ])
+
+            ->add('dateNaissance', BirthdayType::class, [
+               'label'    => 'Date de naissance',
+               'widget'   => 'single_text',
+               'required' => false,
+               'input'    => 'datetime',   
+               'attr'     => [
+               'max' => (new \DateTime())->format('Y-m-d'), 
+                ],
+                ])
+
             ->add('email', EmailType::class, [
                 'label' => 'Email',
                 'attr' => ['placeholder' => 'exemple@mail.com'],
                 'constraints' => [
-                    new NotBlank(message: 'L\'email est obligatoire'), // Correction ici
+                    new NotBlank(message: 'L\'email est obligatoire'), 
                     new Regex(
                         pattern: '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
                         message: 'Le format doit être XXXXXX@XXX.XX'
-                    ) // Correction ici
+                    ) 
                 ]
             ])
             ->add('plainPassword', RepeatedType::class, [
@@ -53,7 +65,7 @@ class RegistrationFormType extends AbstractType
                 'first_options'  => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Confirmez votre mot de passe'],
                 'constraints' => [
-                    new NotBlank(message: 'Le mot de passe est obligatoire'), // Correction ici
+                    new NotBlank(message: 'Le mot de passe est obligatoire'),
                     new Regex(
                         pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
                         message: 'Le mot de passe doit contenir 8 caractères minimum, une majuscule, une minuscule, un chiffre et un caractère spécial.'

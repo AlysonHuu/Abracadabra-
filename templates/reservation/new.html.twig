@@ -1,37 +1,98 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Réserver - {{ seance.film.nom }}{% endblock %}
 
 {% block body %}
 <div class="container mt-5" style="max-width: 800px; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-    <div style="display: flex; gap: 40px; flex-wrap: wrap; align-items: center;">
-        {# Affiche du film #}
+    <div style="display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+
+        
         <div style="flex: 1; min-width: 250px;">
-            <img src="{{ asset('uploads/affiches/' ~ seance.film.affiche) }}" 
-                 alt="Affiche de {{ seance.film.nom }}" 
+            <img src="{{ asset('uploads/affiches/' ~ seance.film.affiche) }}"
+                 alt="Affiche de {{ seance.film.nom }}"
                  style="width: 100%; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.2);">
         </div>
 
-        {# Détails et Formulaire #}
+      
         <div style="flex: 1.5; min-width: 300px;">
             <h1 style="color: #8b0000; margin-bottom: 25px; font-weight: 800;">Réserver vos places</h1>
-            
-            <div style="margin-bottom: 30px; border-left: 5px solid #8b0000; padding-left: 20px; background: #fff8f8; padding-top: 15px; padding-bottom: 15px;">
+
+            <div style="margin-bottom: 30px; border-left: 5px solid #8b0000; padding: 15px 20px; background: #fff8f8; border-radius: 0 8px 8px 0;">
                 <p style="margin-bottom: 8px;"><strong>Film :</strong> {{ seance.film.nom }}</p>
                 <p style="margin-bottom: 8px;"><strong>Séance :</strong> Le {{ seance.dateDiffusion|date('d/m/Y') }} à {{ seance.dateDiffusion|date('H:i') }}</p>
                 <p style="margin-bottom: 8px;"><strong>Salle :</strong> {{ seance.salle.nom }}</p>
-                <p style="margin-bottom: 0;"><strong>Prix :</strong> <span style="color: #8b0000; font-weight: bold; font-size: 1.2rem;">{{ prixUnitaire }} €</span> / place</p>
+
+
+                <p style="margin-bottom: 0;">
+                    <strong>Prix :</strong>
+                    {% if reductionJeune %}
+                        <span style="text-decoration: line-through; color: #bbb; font-size: 0.95rem;">
+                            {{ prixUnitaire }} €
+                        </span>
+                        <span style="color: #fdc406; font-weight: bold; font-size: 1.3rem; margin-left: 6px;">
+                            {{ prixFinal }} €
+                        </span>
+                        <span style="background: #fdc406; color: white; font-size: 0.7rem;
+                                     padding: 3px 10px; border-radius: 20px; margin-left: 6px;
+                                     vertical-align: middle; display: inline-block;">
+                            Tarif Jeune −40%
+                        </span>
+                    {% else %}
+                        <span style="color: #8b0000; font-weight: bold; font-size: 1.2rem;">
+                            {{ prixUnitaire }} €
+                        </span>
+                    {% endif %}
+                    / place
+                </p>
             </div>
 
             <form method="post">
-                <div class="form-group" style="margin-bottom: 25px;">
-                    <label for="nb_places" style="display: block; margin-bottom: 10px; font-weight: bold; color: #555;">Nombre de places :</label>
-                    <input type="number" name="nb_places" id="nb_places" class="form-control" min="1" 
-                           max="{{ seance.salle.nbPlaces - seance.nbPlaceReservees }}" value="1" required 
-                           style="width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; font-size: 1.1rem; font-weight: bold;">
+
+                {# Sélecteur de bon de fidélité #}
+                {% if bonsDisponibles|length > 0 %}
+                <div style="margin-bottom: 20px; padding: 15px; background: #fff8e1;
+                            border: 2px dashed #ffd700; border-radius: 10px;">
+                    <p style="font-weight: bold; color: #856404; margin-bottom: 10px; font-size: 0.95rem;">
+                        <i class="fa-solid fa-gift"></i>
+                        Vous avez {{ bonsDisponibles|length }} bon(s) de fidélité disponible(s) !
+                    </p>
+                    <label style="font-size: 0.85rem; color: #555; display: block; margin-bottom: 6px;">
+                        Appliquer un bon (= 1 place offerte) :
+                    </label>
+                    <select name="code_bon"
+                            style="width: 100%; padding: 10px; border-radius: 8px;
+                                   border: 1px solid #ddd; font-size: 0.9rem; background: white;">
+                        <option value="">— Ne pas utiliser de bon —</option>
+                        {% for bon in bonsDisponibles %}
+                            <option value="{{ bon.code }}">{{ bon.code }} — 1 place offerte</option>
+                        {% endfor %}
+                    </select>
                 </div>
+                {% endif %}
+
+               
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label for="nb_places" style="display: block; margin-bottom: 10px; font-weight: bold; color: #555;">
+                        Nombre de places :
+                    </label>
+                    <input type="number" name="nb_places" id="nb_places" class="form-control"
+                           min="1" max="{{ seance.salle.nbPlaces - seance.nbPlaceReservees }}"
+                           value="1" required
+                           style="width: 100%; padding: 15px; border: 2px solid #eee;
+                                  border-radius: 10px; font-size: 1.1rem; font-weight: bold;">
+                </div>
+
                 
-                <button type="submit" style="width: 100%; padding: 18px; background: #8b0000; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <div id="total-display" style="margin-bottom: 20px; padding: 12px 15px;
+                     background: #f8f8f8; border-radius: 10px; font-size: 0.95rem; color: #555;">
+                    Total estimé : <strong id="total-price" style="color: #8b0000; font-size: 1.1rem;">
+                        {{ prixFinal }} €
+                    </strong>
+                </div>
+
+                <button type="submit" style="width: 100%; padding: 18px; background: #8b0000; color: white;
+                        border: none; border-radius: 10px; cursor: pointer; font-weight: bold;
+                        font-size: 1.1rem; transition: 0.3s; display: flex; align-items: center;
+                        justify-content: center; gap: 10px;">
                     <i class="fa-solid fa-credit-card"></i> Procéder au paiement
                 </button>
             </form>
@@ -42,4 +103,25 @@
         </div>
     </div>
 </div>
+
+<script>
+    const prixFinal   = {{ prixFinal }};
+    const prixGratuit = 0;
+    const nbInput     = document.getElementById('nb_places');
+    const totalEl     = document.getElementById('total-price');
+    const bonSelect   = document.querySelector('select[name="code_bon"]');
+
+    function updateTotal() {
+        const nb       = parseInt(nbInput.value) || 1;
+        const gratuit  = bonSelect && bonSelect.value !== '';
+        const prix     = gratuit ? prixGratuit : prixFinal;
+        const total    = gratuit ? 0 : (nb * prix).toFixed(2);
+        totalEl.textContent = gratuit ? '0 € (Bon fidélité appliqué 🎉)' : total + ' €';
+    }
+
+    nbInput.addEventListener('input', updateTotal);
+    if (bonSelect) bonSelect.addEventListener('change', updateTotal);
+
+    updateTotal();
+</script>
 {% endblock %}

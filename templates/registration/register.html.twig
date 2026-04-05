@@ -6,24 +6,22 @@
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     
     <style>
-        /* FIX LAYOUT : On permet à la page de grandir au-delà de l'écran */
         .split-container {
-            height: auto !important; /* Annule le 100vh qui bloquait la hauteur */
-            min-height: 100vh;      /* Garde au moins toute la hauteur de l'écran */
+            height: auto !important;
+            min-height: 100vh;
         }
 
         .right-side {
-            align-items: flex-start !important; /* Aligne le formulaire vers le haut */
+            align-items: flex-start !important;
             padding-top: 50px !important;
-            padding-bottom: 100px !important; /* Espace de sécurité pour ne pas toucher le footer */
+            padding-bottom: 100px !important;
             overflow-y: auto;
         }
 
         .login-box {
-            margin: 0 auto; /* Centre la box horizontalement */
+            margin: 0 auto;
         }
 
-        /* Optimisation de l'espace pour que ce soit moins "long" */
         .form-group { 
             margin-bottom: 12px !important; 
         }
@@ -32,7 +30,7 @@
         .toggle-btn {
             position: absolute;
             right: 15px;
-            top: 38px; /* Ajusté pour les nouveaux espacements */
+            top: 38px;
             cursor: pointer;
             color: #8b0000;
             z-index: 10;
@@ -43,7 +41,6 @@
             font-size: 0.9rem; 
         }
 
-        /* Styles de centrage pour le bloc Google */
         .google-login-container {
             margin-top: 20px;
             text-align: center;
@@ -76,10 +73,20 @@
             <h1>S'inscrire</h1>
 
             {{ form_start(registrationForm) }}
+
+  
                 <div class="form-group">{{ form_row(registrationForm.nom) }}</div>
+
+              
                 <div class="form-group">{{ form_row(registrationForm.prenom) }}</div>
-                <div class="form-group">{{ form_row(registrationForm.email) }}</div>
+
+               
+                <div class="form-group">{{ form_row(registrationForm.dateNaissance) }}</div>
+
                 
+                <div class="form-group">{{ form_row(registrationForm.email) }}</div>
+
+               
                 <div class="form-group password-row">
                     {{ form_label(registrationForm.plainPassword.first) }}
                     {{ form_widget(registrationForm.plainPassword.first, {'attr': {'id': 'pass1'}}) }}
@@ -87,23 +94,28 @@
                     {{ form_errors(registrationForm.plainPassword.first) }}
                 </div>
 
+               
                 <div class="form-group password-row">
                     {{ form_label(registrationForm.plainPassword.second) }}
                     {{ form_widget(registrationForm.plainPassword.second, {'attr': {'id': 'pass2'}}) }}
                     <i class="fa-solid fa-eye toggle-btn"></i>
                 </div>
 
+               
                 <div class="form-check">
                     {{ form_widget(registrationForm.agreeTerms) }}
                     {{ form_label(registrationForm.agreeTerms) }}
                 </div>
 
-                <button type="submit" class="btn-login" style="margin-top:15px;">Créer mon compte</button>
+                <button type="submit" class="btn-login" style="margin-top:15px;">
+                    Créer mon compte
+                </button>
+
+           
             {{ form_end(registrationForm) }}
 
             <div class="google-login-container">
                 <p class="separator">— OU —</p>
-                
                 <a href="{{ path('connect_google_start') }}" class="btn-google-standard">
                     <svg class="google-icon" viewBox="0 0 48 48" style="width:18px; height:18px; margin-right:10px;">
                         <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
