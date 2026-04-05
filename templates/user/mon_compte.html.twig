@@ -220,10 +220,16 @@
             </div>
 
             <div style="margin-top: auto; padding-top: 20px;">
-                <a href="{{ path('app_film_index') }}" style="color: white; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-plus-circle"></i> Explorer les films
-                </a>
-            </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_film_index') }}" style="color: white; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-plus-circle"></i> Gérer les films
+        </a>
+    {% else %}
+        <a href="{{ path('cinema_homepage') }}" style="color: white; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-plus-circle"></i> Explorer les films
+        </a>
+    {% endif %}
+</div>
         </div>
 
         
