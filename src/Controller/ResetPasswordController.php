@@ -27,12 +27,12 @@ class ResetPasswordController extends AbstractController
             $user = $compteRepository->findOneBy(['email' => $email]);
 
             if ($user) {
-                // Génération du jeton unique
+           
                 $token = $tokenGenerator->generateToken();
                 $user->setResetToken($token);
                 $entityManager->flush();
 
-                // Simulation de l'envoi d'email
+             
                 $url = $this->generateUrl('app_reset_password', ['token' => $token], 0);
                 $this->addFlash('success', "Lien de simulation (à copier) : <a href='$url'>$url</a>");
             } else {
@@ -50,7 +50,7 @@ class ResetPasswordController extends AbstractController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
-        // On cherche l'utilisateur par son jeton
+
         $user = $compteRepository->findOneBy(['resetToken' => $token]);
 
         if (!$user) {
@@ -62,7 +62,7 @@ class ResetPasswordController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // On efface le jeton et on hache le nouveau mot de passe
+          
             $user->setResetToken(null);
             $user->setPassword(
                 $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData())

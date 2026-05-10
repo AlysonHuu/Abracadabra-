@@ -58,7 +58,7 @@ class FideliteService
         if (intdiv($totalPayantes, self::SEUIL) > $bonsExistants) {
             $bon = new BonFidelite();
             $bon->setUser($user);
-            $bon->setCode('MAGIC-' . strtoupper(bin2hex(random_bytes(4))));
+            $bon->setCode('ABRACADADABRA-' . strtoupper(bin2hex(random_bytes(4))));
             $bon->setUtilise(false);
             $this->em->persist($bon);
             $this->em->flush();

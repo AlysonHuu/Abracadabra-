@@ -93,7 +93,7 @@
             background: #8b0000;
         }
 
-        /* --- STYLE CLIENT : PAIEMENT --- */
+       
         .payment-section {
             margin-top: 25px;
             padding: 20px;
@@ -118,7 +118,6 @@
         }
         .btn-pay:hover { background: #a00000; transform: translateY(-2px); }
 
-        /* --- STYLE ADMIN : TABLEAU DE BORD --- */
         .admin-section {
             margin-top: 25px;
             padding: 20px;
@@ -163,12 +162,12 @@
 {% block body %}
 <div class="container">
     <div class="show-card">
-        {# Côté gauche : Affiche du film #}
+       
         <div class="show-poster-side">
             <img src="{{ asset('uploads/affiches/' ~ seance.film.affiche) }}" alt="Affiche {{ seance.film.nom }}">
         </div>
 
-        {# Côté droit : Détails #}
+     
         <div class="show-content-side">
             <h1><i class="fa-solid fa-ticket"></i> Détails de la séance</h1>
 
@@ -210,13 +209,10 @@
                 </div>
             </div>
 
-            {# ========================================== #}
-            {# SÉPARATION DES VUES : ADMIN VS CLIENT      #}
-            {# ========================================== #}
-
+      
             {% if is_granted('ROLE_ADMIN') %}
                 
-                {# --- VUE ADMINISTRATEUR (Tableau de bord) --- #}
+             
                 <div class="admin-section">
                     <h3 style="color: #8b0000; font-size: 1.1rem; margin-bottom: 15px;">
                         <i class="fa-solid fa-user-shield"></i> Espace Administrateur
@@ -243,7 +239,6 @@
 
             {% else %}
 
-                {# --- VUE CLIENT (Module de Paiement) --- #}
                 <div class="payment-section">
                     <h3 style="color: #333; font-size: 1.1rem; margin-bottom: 15px;">Réserver vos places</h3>
                     
@@ -267,7 +262,7 @@
 
             {% endif %}
 
-            {# Barre d'action générale #}
+           
             <div class="action-bar">
                 <a href="{{ path('app_seance_index') }}" class="btn-secondary">
                     <i class="fa-solid fa-arrow-left"></i> Retour au catalogue

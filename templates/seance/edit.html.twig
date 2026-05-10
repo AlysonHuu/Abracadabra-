@@ -80,7 +80,7 @@
             <img id="current-poster-img" src="{{ asset('uploads/affiches/' ~ seance.film.affiche) }}" alt="Affiche">
         </div>
 
-        {# SECTION DROITE : FORMULAIRE #}
+       
         <div class="form-side">
             <div class="form-header">
                 <div>
@@ -88,7 +88,7 @@
                     <p style="color: #999; font-size: 0.8rem;">ID Séance : #{{ seance.id }}</p>
                 </div>
                 
-                {# Petit bouton de suppression #}
+           
                 <form method="post" action="{{ path('app_seance_delete', {'id': seance.id}) }}" onsubmit="return confirm('Supprimer cette programmation ?');">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ seance.id) }}">
                     <button class="btn-delete-mini" title="Supprimer la séance">
@@ -145,28 +145,28 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Initialisation des sélecteurs
+        
             flatpickr(".date-picker", { locale: "fr", dateFormat: "Y-m-d", altInput: true, altFormat: "d F Y" });
             flatpickr(".time-picker", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, minuteIncrement: 15 });
 
-            // 2. Logique de changement d'affiche en temps réel
+           
             const filmSelect = document.querySelector('.film-select');
             const posterImg = document.getElementById('current-poster-img');
             const assetBaseUrl = "{{ asset('uploads/affiches/') }}";
 
             filmSelect.addEventListener('change', function() {
-                // On récupère le nom du fichier depuis l'attribut data-poster de l'option sélectionnée
+               
                 const selectedOption = this.options[this.selectedIndex];
                 const posterFilename = selectedOption.getAttribute('data-poster');
 
-                // Petit effet de fondu pour le changement
+              
                 posterImg.style.opacity = '0';
                 
                 setTimeout(() => {
                     if (posterFilename) {
                         posterImg.src = assetBaseUrl + posterFilename;
                     } else {
-                        posterImg.src = assetBaseUrl + "default.jpg"; // Image par défaut si besoin
+                        posterImg.src = assetBaseUrl + "default.jpg"; 
                     }
                     posterImg.style.opacity = '1';
                 }, 300);

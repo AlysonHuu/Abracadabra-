@@ -17,7 +17,7 @@
         <div class="login-box">
             <h1>Mot de passe oublié</h1>
 
-            {# Affichage des messages de succès ou d'erreur #}
+          
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
                     <div class="alert alert-{{ label == 'danger' ? 'danger' : 'success' }}" 

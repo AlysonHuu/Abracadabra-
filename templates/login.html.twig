@@ -65,11 +65,11 @@
     <div class="slider-container">
         <div class="slide active">
             <h2>Abracadabra cinéma</h2>
-            <!--<p>Profitez d'un moment en famille en regardant un film !</p>-->
+          
         </div>
         <div class="slide">
             <h2>Offre du moment ! <br> UNE PLACE ACHETE = UNE PLACE OFFERTE  </h2>
-            <!--<p>Profitez d'un moment en amoureux a moindre prix ! <br> UNE PLACE ACHETE = UNE PLACE OFFERTE </p>-->
+         
         </div>
         <div class="slide">
             <h2>En ce moment en salle ! <br> <b> Avatar : de Feu et de Cendres</b></h2>
@@ -88,7 +88,6 @@
         <div class="login-box">
             <h1>Connexion</h1>
 
-                {# 1. Affichage de l'erreur si elle existe #}
             {% if error is defined and error %}
                 <div style="background: #ffdada; color: #8b0000; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
                     {{ error.messageKey|trans(error.messageData, 'security') }}
@@ -103,12 +102,12 @@
             {% endfor %}
             <form method="post">
 
-                {# 2. Ajout du jeton CSRF (Indispensable pour AppAuthenticator) #}
+                
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
                 <div class="form-group">
                     <label>Identifiant (Email)</label>
-                    {# 3. On utilise value="{{ last_username }}" pour ne pas avoir à retaper l'email en cas d'erreur #}
+                   
                     <input type="email" name="email" value="{{ last_username }}" placeholder="jean.dupont@mail.com" required autofocus>
  
                 </div>
@@ -135,12 +134,12 @@
                 </div>
             </form>
 
-            {# Option de connexion avec Google  #}
+
             <div class="google-login-container">
                 <p class="separator">— OU —</p>
                 
                 <a href="{{ path('connect_google_start') }}" class="btn-google-standard">
-                    {# Utilisation d'un logo SVG officiel direct pour éviter les bugs d'affichage #}
+                   
                     <svg class="google-icon" viewBox="0 0 48 48">
                         <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
                         <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
@@ -159,11 +158,11 @@
     let currentSlide = 0;
 
     function showSlide(index) {
-        // On enlève la classe active partout
+      
         slides.forEach(s => s.classList.remove('active'));
         dots.forEach(d => d.classList.remove('active'));
 
-        // On l'ajoute sur le slide actuel
+        
         slides[index].classList.add('active');
         dots[index].classList.add('active');
     }
@@ -173,7 +172,7 @@
         showSlide(currentSlide);
     }
 
-    // Change de message toutes les 4 secondes
+   
     setInterval(nextSlide, 4000);
 </script>
 {% endblock %}

@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
 <style>
-    /* Simulation d'étoiles scintillantes */
+   
     .oracle-page-wrapper::before {
         content: "";
         position: absolute;
@@ -16,7 +16,7 @@
 
     @keyframes starsMove { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
 
-    /* 2. LA BOULE DE CRISTAL (Inspirée de ta photo) */
+   
     .crystal-ball-outer {
         width: 380px;
         height: 380px;
@@ -34,18 +34,18 @@
         position: relative;
         overflow: hidden;
         border: 4px solid rgba(255, 255, 255, 0.1);
-        /* Reflet de verre sur la boule */
+      
         box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.2), 
                     inset 10px 0 30px rgba(138, 43, 226, 0.4),
                     inset -10px 0 30px rgba(75, 0, 130, 0.4);
     }
 
-    /* LE FLUIDE MYSTIQUE À L'INTÉRIEUR */
+
     .mystic-fluid {
         position: absolute;
         width: 200%; height: 200%;
         top: -50%; left: -50%;
-        /* Dégradé tourbillonnant */
+       
         background: conic-gradient(from 0deg, transparent, #8a2be2, #4b0082, transparent);
         filter: blur(40px);
         opacity: 0.6;
@@ -54,14 +54,14 @@
 
     @keyframes fluidRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    /* Animation accélérée quand on attend la réponse */
+    
     .active-oracle .mystic-fluid {
         animation: fluidRotate 2s infinite linear;
         opacity: 0.9;
         filter: blur(25px);
     }
 
-    /* Le socle de la boule */
+
     .ball-base {
         width: 180px;
         height: 40px;
@@ -73,7 +73,7 @@
         border-top: 2px solid #555;
     }
 
-    /* 3. INTERFACE SOBRE */
+   
     .oracle-ui { position: relative; z-index: 20; width: 100%; max-width: 600px; margin-top: 30px; }
     
     .oracle-input {
@@ -104,7 +104,7 @@
     }
     .btn-magic:hover { transform: scale(1.05); box-shadow: 0 0 20px #8b0000; }
 
-    /* Ajoutez du padding en bas pour ne pas coller au footer */
+   
     .oracle-page-wrapper {
         min-height: 100vh;
         display: flex;
@@ -119,7 +119,7 @@
         padding: 60px 20px 120px 20px;
     }
 
-    /* Espacement sous la carte de prédiction */
+
     .prediction-card {
         margin-top: 40px;
         margin-bottom: 40px;
@@ -132,7 +132,7 @@
         max-width: 700px;
         border: 1px solid rgba(138, 43, 226, 0.2);
         backdrop-filter: blur(10px);
-        display: none; /* Caché par défaut */
+        display: none; 
     }
 </style>
 {% endblock %}
@@ -145,20 +145,19 @@
     <div class="crystal-ball-outer">
         <div class="crystal-ball">
             <div class="mystic-fluid"></div>
-            {# Reflet de lumière sur le verre #}
+           
             <div style="position: absolute; top: 15%; left: 20%; width: 60px; height: 30px; background: rgba(255,255,255,0.1); border-radius: 50%; transform: rotate(-30deg); filter: blur(5px);"></div>
         </div>
         <div class="ball-base"></div>
     </div>
 
-    {# Le formulaire ne recharge plus la page, il lance le JS au moment de la soumission #}
+   
     <form class="oracle-ui" onsubmit="startDivination(event)">
         <input type="text" id="oracle-input-field" class="oracle-input" placeholder="Quelle vérité cherchez-vous ?" required>
         <br>
         <button type="submit" class="btn-magic">Invoquer l'Oracle</button>
     </form>
 
-    {# La zone de réponse (cachée au début) #}
     <div id="prediction-container" class="prediction-card">
         <i class="fa-solid fa-wand-magic-sparkles" style="color: #8a2be2; margin-bottom: 15px; display: block;"></i>
         <span id="oracle-response-text"></span>
@@ -167,27 +166,27 @@
 
 <script>
 async function startDivination(event) {
-    // 1. On empêche le navigateur de recharger la page
+    
     event.preventDefault();
 
     const wrapper = document.querySelector('.oracle-page-wrapper');
     const inputField = document.getElementById('oracle-input-field');
     const predictionContainer = document.getElementById('prediction-container');
     const responseText = document.getElementById('oracle-response-text');
-    const submitButton = document.querySelector('.btn-magic'); // <-- On cible le bouton
+    const submitButton = document.querySelector('.btn-magic'); 
 
-    // 2. SÉCURITÉ : On bloque le bouton et l'input pour éviter le double-clic
+
     submitButton.disabled = true;
     submitButton.innerText = "Consultation en cours...";
     inputField.disabled = true;
 
-    // 3. On lance l'animation accélérée et on affiche un message de patience
+
     wrapper.classList.add('active-oracle');
     predictionContainer.style.display = 'block';
     responseText.innerHTML = "M. Schneider consulte les esprits... Cela peut prendre quelques instants...";
 
     try {
-        // 4. On envoie la question en sous-marin (AJAX)
+       
         const response = await fetch('{{ path("app_oracle_ajax") }}', {
             method: 'POST',
             headers: {
@@ -197,14 +196,14 @@ async function startDivination(event) {
             body: JSON.stringify({ question: inputField.value })
         });
 
-        // Si la requête échoue côté serveur (ex: dépasse 60s malgré tout)
+     
         if (!response.ok) {
             throw new Error(`Erreur HTTP: ${response.status}`);
         }
 
         const data = await response.json();
         
-        // 5. On affiche la vraie réponse
+      
         responseText.innerHTML = data.reponse;
 
     } catch (error) {

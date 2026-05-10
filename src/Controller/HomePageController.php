@@ -13,7 +13,7 @@ class HomePageController extends AbstractController
     #[Route('/', name: 'cinema_homepage')]
 public function index(FilmRepository $filmRepository): Response
 {
-    // On récupère tous les films de la base de données (Dispo et non-supprimés) 
+   
     $filmsEnBase = $filmRepository->findBy([
         'estDispo' => true,
         'deletedAt' => null 

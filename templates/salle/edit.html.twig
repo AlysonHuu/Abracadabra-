@@ -14,7 +14,7 @@
             padding: 40px; 
         }
         
-        /* --- Style global pour les champs générés par Symfony --- */
+      
         .form-card div { margin-bottom: 20px; }
         .form-card label { 
             font-weight: bold; 
@@ -39,7 +39,7 @@
             box-shadow: 0 0 5px rgba(139,0,0,0.3); 
         }
         
-        /* --- Boutons d'action --- */
+       
         .btn-update { 
             background: #8b0000; 
             color: white; 
@@ -55,7 +55,7 @@
         }
         .btn-update:hover { background: #600000; transform: translateY(-2px); }
 
-        /* Style pour le bouton "Delete" natif de Symfony */
+        
         .delete-wrapper { margin-top: 15px; }
         .delete-wrapper button {
             background: transparent;
@@ -94,7 +94,7 @@
             <i class="fa-solid fa-pen-to-square"></i> Modifier la Salle
         </h1>
 
-        {# Formulaire principal (Mise à jour) #}
+       
         {{ form_start(form) }}
             {{ form_widget(form) }}
             <button type="submit" class="btn-update">
@@ -102,7 +102,7 @@
             </button>
         {{ form_end(form) }}
 
-        {# Formulaire de suppression (Intégré via le fichier _delete_form) #}
+        
         <div class="delete-wrapper">
             {{ include('salle/_delete_form.html.twig') }}
         </div>

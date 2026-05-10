@@ -17,11 +17,11 @@ class PaymentController extends AbstractController
     #[Route('/seance/{id}/paiement', name: 'app_payment_checkout', methods: ['POST'])]
     public function checkout(Seance $seance, Request $request): Response
     {
-        // On initialise Stripe avec ta clé secrète du .env
+ 
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
 
         $nbPlaces = $request->request->get('nb_places', 1);
-        $prixUnitaire = 1000; // 10.00€ (Stripe compte en centimes)
+        $prixUnitaire = 1000; 
 
         $session = Session::create([
             'payment_method_types' => ['card'],
@@ -47,14 +47,14 @@ class PaymentController extends AbstractController
     #[Route('/paiement/succes/{id}/{nb}', name: 'app_payment_success')]
     public function success(Seance $seance, int $nb, EntityManagerInterface $em): Response
     {
-        // On crée la réservation
+
         $reservation = new Reservation();
         $reservation->setCompte($this->getUser());
         $reservation->setSeance($seance);
         $reservation->setNbPlaces($nb);
         $reservation->setCreatedAt(new \DateTimeImmutable());
 
-        // On met à jour le remplissage de la salle
+       
         $seance->setNbPlaceReservees($seance->getNbPlaceReservees() + $nb);
 
         $em->persist($reservation);

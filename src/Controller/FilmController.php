@@ -71,7 +71,7 @@ final class FilmController extends AbstractController
                 $film->setAffiche($newFilename);
             }
 
-            // Calcul de l'aura par l'IA
+          
             $film->setAura($aiService->analyzeAura($film->getNom()));
 
             $entityManager->persist($film);

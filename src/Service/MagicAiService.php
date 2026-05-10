@@ -14,7 +14,7 @@ class MagicAiService
     {
         if (!$userPrompt) return "Posez votre question à l'Oracle...";
 
-        // On prépare une consigne spécifique si on a des films à proposer
+       
         $instructionFilms = $availableMovies 
             ? "Tu DOIS impérativement choisir un film parmi cette liste réelle : $availableMovies." 
             : "Conseille un genre de film général.";
@@ -57,7 +57,7 @@ class MagicAiService
 
             $content = $response->toArray()['response'];
             
-            // Sécurité : On nettoie la réponse pour ne garder que le mot en majuscule
+           
             foreach (['JOIE', 'TRISTESSE', 'PEUR', 'NOSTALGIE', 'MYSTERE'] as $key) {
                 if (stripos($content, $key) !== false) return $key;
             }

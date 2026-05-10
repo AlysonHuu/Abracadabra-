@@ -21,7 +21,7 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Hachage du mot de passe
+      
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
@@ -29,11 +29,11 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            // Le rôle par défaut pour un nouvel inscrit est ROLE_USER
+          
             $user->setRoles(['ROLE_USER']);
 
             $entityManager->persist($user);
-            $entityManager->flush(); // Le createdAt se remplit tout seul ici
+            $entityManager->flush(); 
 
             $this->addFlash('success', 'Votre compte a été créé avec succès ! Connectez-vous maintenant.');
 

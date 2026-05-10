@@ -30,9 +30,9 @@ final class SeanceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // RÉCUPÉRATION ET FUSION
-            $datePart = $form->get('date_part')->getData(); // ex: 2026-03-26
-            $timePart = $form->get('time_part')->getData(); // ex: 14:30:00
+         
+            $datePart = $form->get('date_part')->getData(); 
+            $timePart = $form->get('time_part')->getData(); 
 
             if ($datePart && $timePart) {
                 $dateTime = new \DateTime();
@@ -74,7 +74,7 @@ final class SeanceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // FUSION des deux champs vers la propriété réelle
+           
             $datePart = $form->get('date_part')->getData();
             $timePart = $form->get('time_part')->getData();
 

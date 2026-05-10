@@ -14,7 +14,7 @@
         .btn-save { background: #8b0000; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; transition: 0.3s; }
         .btn-save:hover { background: #600000; transform: translateY(-2px); }
 
-        /* --- NOUVEAU STYLE : ZONE DE PRÉVISUALISATION --- */
+       
         .preview-container {
             width: 100%;
             text-align: center;
@@ -23,7 +23,7 @@
             background-color: #f9f9f9;
             border-radius: 10px;
             border: 2px dashed #ddd;
-            display: none; /* Caché par défaut */
+            display: none; 
         }
         #film-preview-img {
             max-width: 100%;
@@ -50,7 +50,7 @@
 
         {{ form_start(form) }}
             
-            {# --- NOUVELLE ZONE D'AFFICHAGE DE L'AFFICHE --- #}
+          
             <div id="preview-box" class="preview-container">
                 <span class="preview-title">Affiche du film sélectionné :</span>
                 <img id="film-preview-img" alt="Prévisualisation de l'affiche">
@@ -99,7 +99,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Configuration CALENDRIER (Date uniquement)
+           
             flatpickr(".date-picker", {
                 locale: "fr",
                 minDate: "today",
@@ -108,20 +108,16 @@
                 altFormat: "d F Y"
             });
 
-            // Configuration HORLOGE (Heure uniquement)
+          
             flatpickr(".time-picker", {
                 enableTime: true,
-                noCalendar: true, // Cache le calendrier
+                noCalendar: true, 
                 dateFormat: "H:i",
                 time_24hr: true,
                 minuteIncrement: 15
             });
 
-            // ==========================================================
-            // LOGIQUE JAVASCRIPT : PRÉVISUALISATION DYNAMIQUE DU FILM
-            // ==========================================================
-            
-            // 1. On crée un dictionnaire généré par Twig (ID du film => URL de l'image)
+          
             const moviePosters = {
                 {% for choice in form.film.vars.choices %}
                     {% if choice.data.affiche is not empty %}
@@ -130,13 +126,13 @@
                 {% endfor %}
             };
 
-            // 2. On cible le menu déroulant des films via l'ID généré par Symfony
+           
             const filmSelectNode = document.getElementById('{{ form.film.vars.id }}');
             const previewBox = document.getElementById('preview-box');
             const previewImg = document.getElementById('film-preview-img');
 
             if (filmSelectNode) {
-                // 3. Fonction qui met à jour l'image en fonction de la sélection
+               
                 function updatePreview() {
                     const selectedId = filmSelectNode.value;
                     
@@ -149,13 +145,13 @@
                     }
                 }
 
-                // 4. On écoute à chaque fois que l'utilisateur change de film
+             
                 filmSelectNode.addEventListener('change', updatePreview);
                 
-                // 5. On lance la fonction au chargement (au cas où un film est déjà pré-sélectionné)
+             
                 updatePreview();
             }
-            // ==========================================================
+            
         });
     </script>
 {% endblock %}

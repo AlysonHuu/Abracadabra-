@@ -23,7 +23,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // On recharge TOUJOURS depuis la base pour que Doctrine puisse tracker les changements
+        
         /** @var Compte $user */
         $user = $entityManager->getRepository(Compte::class)->find($this->getUser()->getId());
 

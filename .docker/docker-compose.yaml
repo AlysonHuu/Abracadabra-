@@ -42,6 +42,8 @@ services:
                 TIMEZONE: ${TIMEZONE}
         volumes:
             - ../:/var/www/abracadabra:cached
+        environment:
+                 STRIPE_SECRET_KEY=
         networks:
             - abracadabra_network
         ports:

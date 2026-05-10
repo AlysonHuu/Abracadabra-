@@ -322,7 +322,7 @@ class Compte implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeBonFidelite(BonFidelite $bonFidelite): static
     {
         if ($this->bonFidelites->removeElement($bonFidelite)) {
-            // set the owning side to null (unless already changed)
+            
             if ($bonFidelite->getUser() === $this) {
                 $bonFidelite->setUser(null);
             }

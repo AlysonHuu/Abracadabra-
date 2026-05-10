@@ -48,23 +48,22 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
                 $email = $googleUser->getEmail();
 
-                // 1) On cherche l'utilisateur par son email
+           
                 $user = $this->entityManager->getRepository(Compte::class)->findOneBy(['email' => $email]);
 
-                // 2) S'il n'existe pas, on le crée automatiquement
                 if (!$user) {
                     $user = new Compte();
                     $user->setEmail($email);
                     $user->setNom($googleUser->getLastName() ?? 'Utilisateur');
                     $user->setPrenom($googleUser->getFirstName() ?? 'Google');
-                    // On définit un mot de passe aléatoire (non utilisé pour OAuth)
+                  
                     $user->setPassword(bin2hex(random_bytes(16))); 
                     $user->setRoles(['ROLE_USER']);
                     
                     $this->entityManager->persist($user);
                 }
 
-                // On met à jour l'ID Google au cas où
+               
                 $user->setGoogleId($googleUser->getId());
                 $this->entityManager->flush();
 
@@ -75,7 +74,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        // Redirection vers l'accueil après une connexion réussie
+       
         $url = $this->router->generate('cinema_homepage');
 
         return new RedirectResponse($url);

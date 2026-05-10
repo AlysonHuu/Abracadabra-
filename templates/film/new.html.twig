@@ -18,7 +18,7 @@
         .back-link { display: block; text-align: center; margin-top: 20px; color: #8b0000; text-decoration: none; font-weight: bold; }
         .back-link:hover { text-decoration: underline; }
 
-        /* ZONE DE PRÉVISUALISATION DE L'AFFICHE */
+
         .preview-container {
             width: 100%;
             text-align: center;
@@ -27,7 +27,7 @@
             background-color: #f9f9f9;
             border-radius: 10px;
             border: 2px dashed #ddd;
-            display: none; /* Caché par défaut, affiché par JS */
+            display: none;
         }
         #affiche-preview-img {
             max-width: 100%;
@@ -88,7 +88,7 @@
                 </div>
             </div>
 
-            {# Troisième ligne : Note et Disponibilité #}
+          
             <div class="dt-container">
                 <div class="form-group">
                     {{ form_label(form.Note) }}
@@ -100,14 +100,14 @@
                 </div>
             </div>
 
-            {# Fichier Affiche (Prend toute la largeur) #}
+           
             <div class="form-group">
                 {{ form_label(form.Affiche, 'Choisir l\'affiche (JPG/PNG)') }}
-                {# MODIFICATION ICI : On a forcé l'ID 'affiche-input' et l'attribut 'accept' #}
+             
                 {{ form_widget(form.Affiche, {'attr': {'id': 'affiche-input', 'class': 'form-control', 'style': 'padding: 7px;', 'accept': 'image/*'}}) }}
             </div>
 
-            {# Textes longs (Prennent toute la largeur) #}
+           
             <div class="form-group">
                 {{ form_label(form.Description) }}
                 {{ form_widget(form.Description, {'attr': {'class': 'form-control', 'rows': '4'}}) }}
@@ -133,7 +133,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Configuration Calendrier Flatpickr
+      
         flatpickr(".date-picker", {
             locale: "fr",
             dateFormat: "Y-m-d",
@@ -141,15 +141,12 @@
             altFormat: "d F Y"
         });
 
-        // ==========================================================
-        // LOGIQUE JAVASCRIPT : PRÉVISUALISATION INFAILLIBLE
-        // ==========================================================
-        // 1. On cible l'input par son TYPE et non plus par son ID
+     
         const afficheInput = document.querySelector('input[type="file"]');
         const previewBox = document.getElementById('preview-box');
         const previewImg = document.getElementById('affiche-preview-img');
 
-        // On vérifie que le champ existe bien avant d'écouter les changements
+       
         if (afficheInput) {
             afficheInput.addEventListener('change', function(event) {
                 const file = event.target.files[0]; 
@@ -169,7 +166,7 @@
                 }
             });
         }
-        // ==========================================================
+       
     });
 </script>
 {% endblock %}

@@ -13,7 +13,7 @@
         .meta-info { margin-bottom: 20px; font-weight: bold; color: #666; }
         .meta-info span { margin-right: 15px; }
         
-        /* Section Réservation Gaumont */
+       
         .booking-section { background: #121212; color: white; padding: 30px; border-radius: 15px; margin-top: 40px; }
         .date-carousel { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; border-bottom: 1px solid #333; align-items: center; }
         .calendar-icon { padding: 15px; border: 1px solid #444; border-radius: 8px; font-size: 1.2rem; }
@@ -48,7 +48,7 @@
 <div class="container mt-4">
     <div class="film-header">
         <div class="film-poster">
-            {# Utilisation du champ 'Affiche' de ta base [cite: 52] #}
+           
             <img src="{{ asset('uploads/affiches/' ~ film.Affiche) }}" alt="Affiche {{ film.Nom }}">
         </div>
         
@@ -112,7 +112,7 @@
         {% endif %}
     </div>
 
-    {# On n'affiche ces boutons QUE pour les administrateurs #}
+    
     {% if is_granted('ROLE_ADMIN') %}
         <div style="margin-top: 40px; display: flex; gap: 20px; border-top: 1px solid #ddd; padding-top: 20px;">
             <a href="{{ path('app_film_index') }}" class="btn-login" style="background: #666; text-decoration: none; padding: 10px 20px;">
@@ -127,7 +127,7 @@
         </div>
     {% endif %}
 
-    {# Bouton de retour simple pour les utilisateurs #}
+
     {% if not is_granted('ROLE_ADMIN') %}
         <div style="margin-top: 20px;">
             <a href="{{ path('cinema_homepage') }}" style="color: #8b0000; text-decoration: none;">
@@ -139,12 +139,12 @@
 
 <script>
 function selectDate(date) {
-    // 1. Masquer tous les groupes d'horaires
+  
     document.querySelectorAll('.time-group').forEach(el => el.classList.add('d-none'));
-    // 2. Afficher le groupe de la date sélectionnée
+
     document.getElementById('group-' + date).classList.remove('d-none');
     
-    // 3. Gérer l'apparence des boutons du carrousel
+   
     document.querySelectorAll('.date-item').forEach(el => el.classList.remove('active'));
     document.getElementById('btn-' + date).classList.add('active');
 }

@@ -5,9 +5,9 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     <style>
-        /* Conteneur principal avec min-height pour bloquer le footer en bas */
+        
         .admin-page-wrapper {
-            min-height: calc(100vh - 200px); /* Ajuste selon la taille de ton header/footer */
+            min-height: calc(100vh - 200px); 
             display: flex;
             flex-direction: column;
         }
@@ -16,7 +16,7 @@
             max-width: 1200px; 
             margin: 40px auto; 
             padding: 0 20px;
-            flex-grow: 1; /* Pousse le contenu pour que le footer reste en bas */
+            flex-grow: 1; 
         }
 
         .index-header { 
@@ -42,7 +42,7 @@
             padding: 15px 20px; 
         }
 
-        /* Alignements spécifiques demandés */
+       
         .text-left { text-align: left; }
         .text-center { text-align: center; }
         .text-right { text-align: right; }
@@ -55,7 +55,7 @@
         .date-badge { display: flex; flex-direction: column; line-height: 1.2; }
         .date-badge .time { color: #8b0000; font-weight: bold; font-size: 1.1rem; }
         
-        /* Bouton d'ajout aligné et dimensionné */
+       
         .btn-add {
             background: #8b0000;
             color: white;
@@ -70,7 +70,6 @@
             white-space: nowrap;
         }
 
-        /* Alignement des actions à droite */
         .actions-cell { 
             display: flex; 
             gap: 8px; 
@@ -103,9 +102,9 @@
                     <tr>
                         <th class="text-left">Film</th>
                         <th class="text-left">Date & Heure</th>
-                        <th class="text-center">Salle</th> {# Centré selon ta demande #}
+                        <th class="text-center">Salle</th> 
                         <th class="text-left">Remplissage</th>
-                        <th class="text-right">Actions</th> {# Aligné à droite #}
+                        <th class="text-right">Actions</th> 
                     </tr>
                 </thead>
                 <tbody>

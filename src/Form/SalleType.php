@@ -14,15 +14,7 @@ class SalleType extends AbstractType
         $builder
             ->add('Nom')
             ->add('NbPlaces')
-            // ->add('createdAt', null, [
-            //     'widget' => 'single_text',
-            // ])
-            // ->add('updatedAt', null, [
-            //     'widget' => 'single_text',
-            // ])
-            // ->add('deletedAt', null, [
-            //     'widget' => 'single_text',
-            // ])
+           
         ;
     }
 

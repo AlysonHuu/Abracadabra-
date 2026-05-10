@@ -20,7 +20,7 @@ class FilmType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new File(
-                        maxSize: '2M', // On enlève les ' ' autour de la clé et la flèche =>
+                        maxSize: '2M', 
                         mimeTypes: [
                             'image/jpeg',
                             'image/png',
@@ -39,15 +39,7 @@ class FilmType extends AbstractType
             ->add('Duree')
             ->add('Note')
             ->add('Commentaire')
-            // ->add('createdAt', null, [
-            //     'widget' => 'single_text',
-            // ])
-            // ->add('updatedAt', null, [
-            //     'widget' => 'single_text',
-            // ])
-            // ->add('deletedAt', null, [
-            //     'widget' => 'single_text',
-            // ])
+            
         ;
     }
 

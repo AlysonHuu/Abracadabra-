@@ -31,7 +31,7 @@
 </div>
 
 
-{# ... après le carrousel de pub ... #}
+
 
 <section class="carousel-section">
     <h2 class="section-title">À L'AFFICHE</h2>
@@ -39,15 +39,15 @@
     <div class="carousel-container">
         <button class="arrow left" onclick="prevSlide()">❮</button>
 
-        <div class="movie-carousel"> {# Renommé ici #}
+        <div class="movie-carousel"> 
             {% for film in films %}
-                <div class="movie-card"> {# Renommé ici #}
+                <div class="movie-card"> 
                     <img src="{{ film.Affiche ? asset('uploads/affiches/' ~ film.Affiche) : asset('images/no-poster.jpg') }}" alt="{{ film.Nom }}">
                     
                     <div class="film-info">
                         <h3>{{ film.Nom }}</h3>
                         <p>⏱ {{ film.Duree }} min</p>
-                        {# ... reste du code des étoiles ... #}
+                        
                         <a href="{{ path('app_film_show', {'id': film.id}) }}" class="btn">Réserver</a>
                     </div>
                 </div>

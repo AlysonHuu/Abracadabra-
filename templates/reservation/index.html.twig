@@ -12,7 +12,7 @@
         gap: 40px; padding: 40px; max-width: 1400px; margin: 0 auto;
     }
 
-    /* --- STYLE DES TICKETS --- */
+ 
     .ticket-card {
         background: #f4ecd8;
         display: flex; height: 220px;
@@ -103,7 +103,7 @@
 
     <div class="tickets-container">
         {% for res in reservations %}
-            {# L'aura est désormais lue directement depuis la base de données via le film #}
+           
             <div class="ticket-card aura-{{ res.seance.film.aura|default('MYSTERE') }} shine-anim" 
                  onclick="openTicket('{{ res.ticketToken }}', '{{ res.seance.film.nom|escape('js') }}')">
                 
@@ -173,9 +173,7 @@
 let currentFilm = "";
 let currentUserName = "{{ app.user.prenom|default('Cinéphile') }}";
 
-/**
- * EFFET 3D "HAPPÉ" PAR LA SOURIS
- */
+
 document.querySelectorAll('.ticket-card').forEach(card => {
     card.addEventListener('mousemove', e => {
         const rect = card.getBoundingClientRect();
@@ -199,12 +197,10 @@ document.querySelectorAll('.ticket-card').forEach(card => {
     });
 });
 
-/**
- * GESTION DE LA MODALE ET DU BILLET
- */
+
 function openTicket(token, filmName) {
     currentFilm = filmName;
-    const qrUrl = "/qrcode/" + token; // Assure-toi que cette route existe bien dans ton projet
+    const qrUrl = "/qrcode/" + token; 
     document.getElementById('large-qr-img').src = qrUrl;
     document.getElementById('qr-mini-bg').src = qrUrl;
     

@@ -13,8 +13,7 @@
             margin: 40px auto; 
             padding: 40px; 
         }
-        
-        /* --- Style global pour les champs générés par Symfony --- */
+
         .form-card div { margin-bottom: 20px; }
         .form-card label { 
             font-weight: bold; 
@@ -39,7 +38,7 @@
             box-shadow: 0 0 5px rgba(139,0,0,0.3); 
         }
         
-        /* --- Boutons et liens --- */
+       
         .btn-save { 
             background: #8b0000; 
             color: white; 
@@ -76,7 +75,7 @@
 
         {{ form_start(form) }}
             
-            {# Symfony génère les champs (nom, nb_places), notre CSS les rend beaux ! #}
+          
             {{ form_widget(form) }}
 
             <button type="submit" class="btn-save">
